@@ -1,0 +1,169 @@
+const phoneTimeElements = document.querySelectorAll(".phone-time");
+
+if (phoneTimeElements.length > 0) {
+  const timeFormatter = new Intl.DateTimeFormat([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  const updatePhoneTime = () => {
+    const currentTime = timeFormatter.format(new Date());
+    phoneTimeElements.forEach((element) => {
+      element.textContent = currentTime;
+    });
+  };
+
+  const scheduleNextTimeUpdate = () => {
+    const now = new Date();
+    const delayUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+    window.setTimeout(() => {
+      updatePhoneTime();
+      scheduleNextTimeUpdate();
+    }, Math.max(250, delayUntilNextMinute));
+  };
+
+  updatePhoneTime();
+  scheduleNextTimeUpdate();
+}
+
+const toggleButtons = document.querySelectorAll(".toggle-password");
+
+toggleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const input = button.parentElement?.querySelector("input");
+    const inputWrap = button.closest(".input-wrap");
+
+    if (!input) {
+      return;
+    }
+
+    const nextType = input.type === "password" ? "text" : "password";
+    const isPasswordVisible = nextType === "text";
+
+    input.type = nextType;
+    button.classList.toggle("is-active", isPasswordVisible);
+    inputWrap?.classList.toggle("password-visible", isPasswordVisible);
+    button.setAttribute("aria-pressed", String(isPasswordVisible));
+    button.setAttribute("aria-label", isPasswordVisible ? "Hide password" : "Show password");
+    button.setAttribute("title", isPasswordVisible ? "Hide password" : "Show password");
+  });
+});
+
+const otpSlots = Array.from(document.querySelectorAll(".otp-slot"));
+
+otpSlots.forEach((slot, index) => {
+  slot.addEventListener("input", () => {
+    slot.value = slot.value.replace(/\D/g, "").slice(0, 1);
+
+    if (slot.value && index < otpSlots.length - 1) {
+      otpSlots[index + 1].focus();
+      otpSlots[index + 1].select();
+    }
+  });
+
+  slot.addEventListener("keydown", (event) => {
+    if (event.key === "Backspace" && !slot.value && index > 0) {
+      otpSlots[index - 1].focus();
+    }
+  });
+});
+
+if (document.documentElement.classList.contains("auth-enter")) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.documentElement.classList.add("auth-enter-active");
+      window.setTimeout(() => {
+        sessionStorage.removeItem("gymdeck-enter");
+      }, 560);
+    });
+  });
+}
+
+const isAuthDestination = (destination) => {
+  if (!destination) {
+    return false;
+  }
+
+  try {
+    const url = new URL(destination, window.location.href);
+    return url.origin === window.location.origin && url.pathname.includes("/authentication/");
+  } catch {
+    return false;
+  }
+};
+
+const navigateWithTransition = (destination, enterState, trigger) => {
+  if (!destination) {
+    return;
+  }
+
+  const resolvedEnterState = enterState || (isAuthDestination(destination) ? "auth" : "");
+
+  if (resolvedEnterState) {
+    sessionStorage.setItem("gymdeck-enter", resolvedEnterState);
+  } else {
+    sessionStorage.removeItem("gymdeck-enter");
+  }
+
+  if (trigger instanceof HTMLButtonElement) {
+    trigger.setAttribute("disabled", "true");
+
+    if (trigger.type === "submit") {
+      trigger.textContent = "Please wait...";
+    }
+  }
+
+  document.body.classList.add("is-transitioning");
+
+  window.setTimeout(() => {
+    window.location.href = destination;
+  }, 420);
+};
+
+document.querySelectorAll("form[data-redirect]").forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const destination = form.getAttribute("data-redirect") || form.getAttribute("action");
+    const enterState = form.getAttribute("data-enter-state");
+    const submitButton = form.querySelector(".primary-btn");
+
+    navigateWithTransition(destination, enterState, submitButton);
+  });
+});
+
+document.querySelectorAll("button[data-redirect]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const destination = button.getAttribute("data-redirect");
+    const enterState = button.getAttribute("data-enter-state");
+
+    navigateWithTransition(destination, enterState, button);
+  });
+});
+
+document.querySelectorAll("a[href]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      link.target === "_blank" ||
+      link.hasAttribute("download") ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const destination = link.getAttribute("href");
+
+    if (!destination || destination.startsWith("#") || destination.startsWith("mailto:") || destination.startsWith("tel:")) {
+      return;
+    }
+
+    event.preventDefault();
+    navigateWithTransition(destination, link.getAttribute("data-enter-state"), link);
+  });
+});

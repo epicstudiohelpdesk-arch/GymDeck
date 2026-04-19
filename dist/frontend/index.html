@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GymDeck Dashboard</title>
+    <script>
+      if (sessionStorage.getItem("gymdeck-enter") === "dashboard") {
+        document.documentElement.classList.add("dashboard-enter");
+        sessionStorage.removeItem("gymdeck-enter");
+      }
+    </script>
+    <link rel="preconnect" href="/" />
+    <link rel="preconnect" href="https://api.dicebear.com" />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="preload" href="/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="dns-prefetch" href="https://api.dicebear.com" />
+    <script type="module" crossorigin src="/assets/dashboard-CJE-yV6q.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/dashboard-9b8gEs1F.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar" id="sidebar-menu">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2.5c1.05 3.98 2.03 4.97 6 6-3.97 1.03-4.95 2.02-6 6-1.05-3.98-2.03-4.97-6-6 3.97-1.03 4.95-2.02 6-6Z"
+              />
+            </svg>
+          </div>
+          <span>GymDeck</span>
+        </div>
+
+        <div class="sidebar-group sidebar-group-overview">
+          <p class="sidebar-title">Overview</p>
+          <nav class="nav-list">
+            <a class="nav-item active" href="#" data-view="dashboard" aria-current="page">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="3" width="8" height="18" rx="2" />
+                  <rect x="13" y="3" width="8" height="10" rx="2" />
+                  <rect x="13" y="15" width="8" height="6" rx="2" />
+                </svg>
+              </span>
+              Dashboard
+            </a>
+            <a class="nav-item" href="#" data-view="members">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 16.5v-9Z" />
+                  <path d="M5.8 9.2h12.4" />
+                </svg>
+              </span>
+              Members
+            </a>
+            <a class="nav-item" href="#" data-view="attendance">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 4h7a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2V4Z" />
+                  <path d="M15 9h3v11h-3" />
+                  <path d="M9 8h3" />
+                </svg>
+              </span>
+              Attendance
+            </a>
+            <a class="nav-item" href="#" data-view="payments">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="16" height="16" rx="3" />
+                  <path d="M8.5 12.2 10.8 14.5 15.8 9.5" />
+                  <path d="M8 7.5h8" />
+                </svg>
+              </span>
+              Payments
+            </a>
+            <a class="nav-item" href="#" data-view="trainers">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="9" cy="9" r="3" />
+                  <circle cx="16.5" cy="14.5" r="2.5" />
+                  <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
+                  <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
+                </svg>
+              </span>
+              Trainers
+            </a>
+            <a class="nav-item" href="#" data-view="personal-training">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="9" cy="9" r="3" />
+                  <circle cx="16.5" cy="14.5" r="2.5" />
+                  <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
+                  <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
+                </svg>
+              </span>
+              Personal Training
+            </a>
+            <a class="nav-item" href="#" data-view="notify-members">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="9" cy="9" r="3" />
+                  <circle cx="16.5" cy="14.5" r="2.5" />
+                  <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
+                  <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
+                </svg>
+              </span>
+              Notify Members
+            </a>
+          </nav>
+        </div>
+
+        <div class="sidebar-group sidebar-group-members">
+          <p class="sidebar-title">New Members</p>
+          <div class="friend-list">
+            <div class="friend">
+              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Bagas" alt="Bagas Mahpie" loading="lazy" />
+              <div>
+                <strong>Bagas Mahpie</strong>
+                <span>Friend</span>
+              </div>
+            </div>
+            <div class="friend">
+              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Dandy" alt="Sir Dandy" loading="lazy" />
+              <div>
+                <strong>Sir Dandy</strong>
+                <span>Old Friend</span>
+              </div>
+            </div>
+            <div class="friend">
+              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jhon" alt="Jhon Tosan" loading="lazy" />
+              <div>
+                <strong>Jhon Tosan</strong>
+                <span>Friend</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-group sidebar-settings">
+          <p class="sidebar-title">Settings</p>
+          <a class="nav-item" href="#">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="3.2" />
+                <path d="m12 2 1 2.6 2.8.6-.7 2.8 2 2-2 2 .7 2.8-2.8.6L12 22l-1-2.6-2.8-.6.7-2.8-2-2 2-2-.7-2.8 2.8-.6L12 2Z" />
+              </svg>
+            </span>
+            Setting
+          </a>
+          <a class="nav-item logout" href="#">
+            <span class="icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 4H5v16h5" />
+                <path d="M13 8l5 4-5 4" />
+                <path d="M8 12h10" />
+              </svg>
+            </span>
+            Logout
+          </a>
+        </div>
+      </aside>
+      <button class="sidebar-overlay" aria-label="Close menu"></button>
+      <div class="logout-dialog-backdrop" hidden></div>
+      <section
+        class="logout-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="logout-dialog-title"
+        aria-describedby="logout-dialog-copy"
+        hidden
+      >
+        <p class="logout-dialog-kicker">Confirm action</p>
+        <h2 id="logout-dialog-title">Log out of GymDeck?</h2>
+        <p id="logout-dialog-copy">
+          You’ll be redirected to the sign-in page. Do you really want to continue?
+        </p>
+        <div class="logout-dialog-actions">
+          <button class="dialog-btn dialog-btn-muted" type="button" data-logout-cancel>Cancel</button>
+          <button class="dialog-btn dialog-btn-danger" type="button" data-logout-confirm>Yes, log out</button>
+        </div>
+      </section>
+      <div class="document-modal-backdrop" hidden></div>
+      <section
+        class="document-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="document-modal-title"
+        aria-describedby="document-modal-copy"
+        hidden
+      >
+        <div class="document-modal-top">
+          <div>
+            <p class="document-modal-kicker">Residential Proof</p>
+            <h2 id="document-modal-title">Document Preview</h2>
+          </div>
+          <button class="document-close-btn" type="button" aria-label="Close document preview" data-document-close>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+        <p id="document-modal-copy" class="document-modal-copy">
+          Preview for the selected member will appear here once the document viewer is connected.
+        </p>
+        <div class="document-modal-preview">
+          <span class="document-chip" data-document-member>Member Record</span>
+          <strong data-document-type>Residence Proof</strong>
+          <div class="document-modal-figure" data-document-figure hidden>
+            <img src="" alt="" data-document-image />
+          </div>
+          <p>
+            This modal is ready for document images, PDFs, or verification details. For now it opens
+            as a smooth preview shell when `View Document` is clicked.
+          </p>
+        </div>
+        <div class="document-modal-actions">
+          <button class="dialog-btn dialog-btn-muted" type="button" data-document-close>Close</button>
+          <button class="dialog-btn dialog-btn-danger" type="button">Verified Copy</button>
+        </div>
+      </section>
+      <div class="member-form-backdrop" hidden></div>
+      <section
+        class="member-form-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="member-form-title"
+        aria-describedby="member-form-copy"
+        hidden
+      >
+        <div class="member-form-top">
+          <div>
+            <p class="member-form-kicker">New Registration</p>
+            <h2 id="member-form-title">Add New Member</h2>
+          </div>
+          <button class="document-close-btn" type="button" aria-label="Close add member form" data-add-member-close>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6 18 18" />
+              <path d="M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+        <p id="member-form-copy" class="member-form-copy">
+          Start a clean new profile with all the key member information captured in one focused flow.
+        </p>
+        <p class="member-form-alert" data-member-form-alert hidden></p>
+        <form class="member-form-grid" novalidate>
+          <label class="member-field" data-field-label="Full Name">
+            <span>Full Name <em>*</em></span>
+            <input type="text" placeholder="Enter member name" required />
+            <small class="member-field-error" hidden>Please enter the member's full name.</small>
+          </label>
+          <label class="member-field" data-field-label="Contact Number">
+            <span>Contact Number <em>*</em></span>
+            <input type="tel" placeholder="Enter primary contact" required />
+            <small class="member-field-error" hidden>Please enter the primary contact number.</small>
+          </label>
+          <label class="member-field" data-field-label="Alternate Contact">
+            <span>Alternate Contact <em>*</em></span>
+            <input type="tel" placeholder="Enter alternate contact" required />
+            <small class="member-field-error" hidden>Please enter the alternate contact number.</small>
+          </label>
+          <label class="member-field" data-field-label="Email Address">
+            <span>Email Address</span>
+            <input type="email" placeholder="Enter email address" />
+            <small class="member-field-error" hidden>Please enter a valid email address.</small>
+          </label>
+          <label class="member-field" data-field-label="Date of Birth">
+            <span>Date of Birth <em>*</em></span>
+            <div class="date-input-wrap" data-date-picker>
+              <input
+                class="date-display-input"
+                type="text"
+                placeholder="Select date of birth"
+                readonly
+                required
+                data-member-dob-display
+              />
+              <input type="hidden" data-member-dob-input />
+              <button class="date-picker-btn" type="button" aria-label="Open date picker" data-member-dob-trigger>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 4v4" />
+                  <path d="M17 4v4" />
+                  <rect x="4" y="6.5" width="16" height="13" rx="3" />
+                  <path d="M4 10h16" />
+                  <path d="M8 13h3" />
+                </svg>
+              </button>
+              <section class="date-picker-panel" data-date-picker-panel hidden>
+                <div class="date-picker-header">
+                  <div class="date-picker-header-copy">
+                    <span class="date-picker-label">Choose Date</span>
+                    <button class="date-picker-title" type="button" data-date-picker-title>
+                      <strong data-date-picker-month>April 2026</strong>
+                      <span>Choose Year</span>
+                    </button>
+                  </div>
+                  <div class="date-picker-nav">
+                    <button type="button" aria-label="Previous month" data-date-picker-prev>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m14 6-6 6 6 6" />
+                      </svg>
+                    </button>
+                    <button type="button" aria-label="Next month" data-date-picker-next>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m10 6 6 6-6 6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="date-picker-weekdays" aria-hidden="true">
+                  <span>Sun</span>
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                </div>
+                <div class="date-picker-grid" data-date-picker-grid></div>
+                <div class="date-picker-years" data-date-picker-years hidden></div>
+                <div class="date-picker-actions">
+                  <button type="button" data-date-picker-clear>Clear</button>
+                  <button type="button" data-date-picker-today>Today</button>
+                </div>
+              </section>
+            </div>
+            <small class="member-field-error" hidden>Please select the member's date of birth.</small>
+          </label>
+          <label class="member-field" data-field-label="Height">
+            <span>Height</span>
+            <input type="text" placeholder="e.g. 175 cm" />
+            <small class="member-field-error" hidden></small>
+          </label>
+          <label class="member-field" data-field-label="Weight">
+            <span>Weight</span>
+            <input type="text" placeholder="e.g. 70 kg" />
+            <small class="member-field-error" hidden></small>
+          </label>
+          <label class="member-field" data-field-label="Govt Document">
+            <span>Govt Document <em>*</em></span>
+            <input type="text" placeholder="e.g. Aadhaar Card" required />
+            <div class="member-upload">
+              <input
+                class="member-upload-input"
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                data-member-upload-input
+                data-upload-label="Govt Document"
+                hidden
+              />
+              <button class="member-upload-trigger" type="button" data-member-upload-trigger>
+                Upload document
+              </button>
+              <span class="member-upload-meta" data-member-upload-meta>No file selected</span>
+              <div class="member-upload-preview" data-member-upload-preview hidden>
+                <button
+                  class="member-upload-remove"
+                  type="button"
+                  aria-label="Remove uploaded government document"
+                  data-member-upload-remove
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6 18 18" />
+                    <path d="M18 6 6 18" />
+                  </svg>
+                </button>
+                <img class="member-upload-preview-image" src="" alt="" data-member-upload-image hidden />
+                <iframe class="member-upload-preview-pdf" src="" title="Uploaded PDF preview" data-member-upload-pdf hidden></iframe>
+              </div>
+            </div>
+            <small class="member-field-error" hidden>Please enter the government document used for verification.</small>
+          </label>
+          <label class="member-field member-field-wide" data-field-label="Address">
+            <span>Address <em>*</em></span>
+            <textarea rows="4" placeholder="Enter complete residential address" required></textarea>
+            <small class="member-field-error" hidden>Please enter the residential address.</small>
+          </label>
+          <label class="member-field member-field-wide" data-field-label="Proof of Residence">
+            <span>Proof of Residence <em>*</em></span>
+            <input type="text" placeholder="e.g. Electricity Bill / Rent Agreement" required />
+            <div class="member-upload">
+              <input
+                class="member-upload-input"
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                data-member-upload-input
+                data-upload-label="Proof of Residence"
+                hidden
+              />
+              <button class="member-upload-trigger" type="button" data-member-upload-trigger>
+                Upload document
+              </button>
+              <span class="member-upload-meta" data-member-upload-meta>No file selected</span>
+              <div class="member-upload-preview" data-member-upload-preview hidden>
+                <button
+                  class="member-upload-remove"
+                  type="button"
+                  aria-label="Remove uploaded proof of residence"
+                  data-member-upload-remove
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6 18 18" />
+                    <path d="M18 6 6 18" />
+                  </svg>
+                </button>
+                <img class="member-upload-preview-image" src="" alt="" data-member-upload-image hidden />
+                <iframe class="member-upload-preview-pdf" src="" title="Uploaded PDF preview" data-member-upload-pdf hidden></iframe>
+              </div>
+            </div>
+            <small class="member-field-error" hidden>Please enter the proof of residence document.</small>
+          </label>
+        </form>
+        <div class="member-form-actions">
+          <button class="dialog-btn dialog-btn-muted" type="button" data-add-member-close>Cancel</button>
+          <button class="dialog-btn dialog-btn-danger" type="button" data-member-save>Save Member</button>
+        </div>
+      </section>
+
+      <main class="main-layout">
+        <div class="dashboard-stage is-active" data-stage="dashboard">
+        <section class="content">
+          <header class="topbar">
+            <label class="searchbar">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="m16 16 4.5 4.5" />
+              </svg>
+              <input type="text" value="" placeholder="Search your course...." />
+            </label>
+
+            <div class="top-actions">
+              <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+              <button class="icon-btn" aria-label="messages">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 7h14v10H5z" />
+                  <path d="m6.5 8.5 5.5 4 5.5-4" />
+                </svg>
+              </button>
+              <button class="icon-btn" aria-label="notifications">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 4a4 4 0 0 1 4 4v3.8l1.3 2.6H6.7L8 11.8V8a4 4 0 0 1 4-4Z" />
+                  <path d="M10 18a2 2 0 0 0 4 0" />
+                </svg>
+              </button>
+              <div class="profile-pill">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jason" alt="Jason Ranti" loading="lazy" />
+                <span>Jason Ranti</span>
+              </div>
+            </div>
+          </header>
+
+          <section class="hero-card">
+            <div class="hero-text">
+              <p>Online Course</p>
+              <h1>Sharpen Your Skills with Professional Online Courses</h1>
+              <button class="join-btn">
+                Join Now
+                <span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m9 6 6 6-6 6" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+            <div class="hero-stars" aria-hidden="true">
+              <span class="star star-a"></span>
+              <span class="star star-b"></span>
+              <span class="star star-c"></span>
+              <span class="star star-d"></span>
+            </div>
+          </section>
+
+          <section class="mini-course-row">
+            <article class="mini-course">
+              <div class="mini-icon lilac">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m7 7 10 10" />
+                  <path d="m17 7-3 3" />
+                  <path d="m10 14-3 3" />
+                  <path d="M8.5 5.5 5.5 8.5" />
+                  <path d="m18.5 15.5-3 3" />
+                </svg>
+              </div>
+              <div class="mini-copy">
+                <span>2/8 watched</span>
+                <strong>UI/UX Design</strong>
+              </div>
+              <button class="dots" aria-label="more">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="5" r="1.8" />
+                  <circle cx="12" cy="12" r="1.8" />
+                  <circle cx="12" cy="19" r="1.8" />
+                </svg>
+              </button>
+            </article>
+
+            <article class="mini-course">
+              <div class="mini-icon pink">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="5" y="5" width="10" height="10" rx="2" />
+                  <rect x="9" y="9" width="10" height="10" rx="2" />
+                </svg>
+              </div>
+              <div class="mini-copy">
+                <span>3/8 watched</span>
+                <strong>Branding</strong>
+              </div>
+              <button class="dots" aria-label="more">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="5" r="1.8" />
+                  <circle cx="12" cy="12" r="1.8" />
+                  <circle cx="12" cy="19" r="1.8" />
+                </svg>
+              </button>
+            </article>
+
+            <article class="mini-course">
+              <div class="mini-icon sky">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 4v4" />
+                  <path d="M17 4v4" />
+                  <rect x="4" y="6.5" width="16" height="13" rx="3" />
+                  <path d="M4 10h16" />
+                  <path d="M8 13h3" />
+                </svg>
+              </div>
+              <div class="mini-copy">
+                <span>6/12 watched</span>
+                <strong>Front End</strong>
+              </div>
+              <button class="dots" aria-label="more">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="5" r="1.8" />
+                  <circle cx="12" cy="12" r="1.8" />
+                  <circle cx="12" cy="19" r="1.8" />
+                </svg>
+              </button>
+            </article>
+          </section>
+
+          <section class="section-head">
+            <h2>Continue Watching</h2>
+            <div class="slider-nav">
+              <button aria-label="previous">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m14 6-6 6 6 6" />
+                </svg>
+              </button>
+              <button class="active" aria-label="next">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m10 6 6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+          </section>
+
+          <section class="course-grid">
+            <article class="course-card">
+              <div class="course-image image-one">
+                <button class="heart-btn" aria-label="favorite">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 20-6.2-6a4 4 0 0 1 5.7-5.6L12 9l.5-.6a4 4 0 0 1 5.7 5.6Z" />
+                  </svg>
+                </button>
+              </div>
+              <span class="tag blue">Front End</span>
+              <h3>Beginner's Guide to Becoming a Professional Front-End Developer</h3>
+              <div class="progress-line"><span style="width: 74%"></span></div>
+              <div class="mentor-line">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Leonardo" alt="Leonardo samsul" loading="lazy" />
+                <div>
+                  <strong>Leonardo samsul</strong>
+                  <span>Mentor</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="course-card">
+              <div class="course-image image-two">
+                <button class="heart-btn" aria-label="favorite">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 20-6.2-6a4 4 0 0 1 5.7-5.6L12 9l.5-.6a4 4 0 0 1 5.7 5.6Z" />
+                  </svg>
+                </button>
+              </div>
+              <span class="tag lilac">UI/UX Design</span>
+              <h3>Optimizing User Experience with the Best UI/UX Design</h3>
+              <div class="progress-line"><span style="width: 56%"></span></div>
+              <div class="mentor-line">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Bayu" alt="Bayu Salto" loading="lazy" />
+                <div>
+                  <strong>Bayu Salto</strong>
+                  <span>Mentor</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="course-card">
+              <div class="course-image image-three">
+                <button class="heart-btn" aria-label="favorite">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 20-6.2-6a4 4 0 0 1 5.7-5.6L12 9l.5-.6a4 4 0 0 1 5.7 5.6Z" />
+                  </svg>
+                </button>
+              </div>
+              <span class="tag pink">Branding</span>
+              <h3>Reviving and Refreshing Company Image</h3>
+              <div class="progress-line"><span style="width: 48%"></span></div>
+              <div class="mentor-line">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Padhang" alt="Padhang Satrio" loading="lazy" />
+                <div>
+                  <strong>Padhang Satrio</strong>
+                  <span>Mentor</span>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="lesson-section">
+            <div class="section-head compact">
+              <h2>Your Lesson</h2>
+              <a href="#">See all</a>
+            </div>
+            <div class="lesson-table">
+              <div class="table-head">
+                <span>Mentor</span>
+                <span>Type</span>
+                <span>Desc</span>
+                <span>Action</span>
+              </div>
+              <div class="table-row">
+                <div class="mentor-cell">
+                  <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Padhang" alt="Padhang Satrio" loading="lazy" />
+                  <div>
+                    <strong>Padhang Satrio</strong>
+                    <span>2/16/2004</span>
+                  </div>
+                </div>
+                <div class="type-cell">
+                  <span class="tag lilac">UI/UX Design</span>
+                </div>
+                <div class="desc-cell">Understand Of UI/UX Design</div>
+                <div class="action-cell">
+                  <button class="launch-btn" aria-label="open lesson">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M8 16 16 8" />
+                      <path d="M10 8h6v6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="rightbar">
+          <section class="rightbar-spotlight">
+            <div class="spotlight-copy">
+              <span class="spotlight-kicker">Today</span>
+              <h2>Stay on track with your learning pulse</h2>
+              <p>One glance for weekly energy, mentor activity, and lesson momentum.</p>
+            </div>
+            <div class="spotlight-stack" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </section>
+
+          <section class="stat-card">
+            <div class="card-top">
+              <h2>Statistic</h2>
+              <button class="dots" aria-label="more">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="5" r="1.8" />
+                  <circle cx="12" cy="12" r="1.8" />
+                  <circle cx="12" cy="19" r="1.8" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="ring-wrap">
+              <div class="progress-ring">
+                <div class="progress-ring-inner">
+                  <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jason" alt="Jason avatar" loading="lazy" />
+                </div>
+                <span class="ring-badge">32%</span>
+              </div>
+            </div>
+
+            <h3>GoodMorning Jason <span>🔥</span></h3>
+            <p>Continue your learning to achieve your target!</p>
+
+            <div class="stat-pills">
+              <span class="stat-pill stat-pill-dark">12 lessons</span>
+              <span class="stat-pill">4 mentors</span>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-y">
+                <span>60</span>
+                <span>40</span>
+                <span>20</span>
+              </div>
+              <div class="chart-bars">
+                <div class="bar-group">
+                  <span class="bar light" style="height: 44%"></span>
+                  <span class="bar dark" style="height: 64%"></span>
+                  <span>1-10 Aug</span>
+                </div>
+                <div class="bar-group">
+                  <span class="bar light" style="height: 42%"></span>
+                  <span class="bar dark" style="height: 98%"></span>
+                  <span>11-20 Aug</span>
+                </div>
+                <div class="bar-group">
+                  <span class="bar light" style="height: 38%"></span>
+                  <span class="bar dark" style="height: 54%"></span>
+                  <span>21-30 Aug</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="mentor-card">
+            <div class="section-head compact right-head">
+              <h2>Your mentor</h2>
+              <button class="plus-btn" aria-label="add mentor">+</button>
+            </div>
+
+            <div class="mentor-rail">
+              <span class="mentor-rail-dot active"></span>
+              <span class="mentor-rail-dot"></span>
+              <span class="mentor-rail-dot"></span>
+            </div>
+
+            <div class="mentor-list">
+              <div class="mentor-item">
+                <div class="mentor-profile">
+                  <div class="mentor-avatar yellow">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=HatMentor" alt="Padhang Satrio" loading="lazy" />
+                  </div>
+                  <div>
+                    <strong>Padhang Satrio</strong>
+                    <span>Mentor</span>
+                  </div>
+                </div>
+                <span class="mentor-status">Available</span>
+                <button class="follow-btn">Follow</button>
+              </div>
+
+              <div class="mentor-item">
+                <div class="mentor-profile">
+                  <div class="mentor-avatar pink">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Zakir" alt="Zakir Horizontal" loading="lazy" />
+                  </div>
+                  <div>
+                    <strong>Zakir Horizontal</strong>
+                    <span>Mentor</span>
+                  </div>
+                </div>
+                <span class="mentor-status">In session</span>
+                <button class="follow-btn">Follow</button>
+              </div>
+
+              <div class="mentor-item">
+                <div class="mentor-profile">
+                  <div class="mentor-avatar sand">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Leonardo" alt="Leonardo Samsul" loading="lazy" />
+                  </div>
+                  <div>
+                    <strong>Leonardo Samsul</strong>
+                    <span>Mentor</span>
+                  </div>
+                </div>
+                <span class="mentor-status">Available</span>
+                <button class="follow-btn">Follow</button>
+              </div>
+            </div>
+
+            <button class="see-all-btn">See All</button>
+          </section>
+        </aside>
+        </div>
+        <section class="members-stage" data-stage="members" aria-hidden="true">
+          <div class="members-shell">
+            <header class="members-hero">
+              <div class="members-hero-copy">
+                <p class="members-kicker">Member Directory</p>
+                <h1>Manage every member profile from one clean workspace.</h1>
+                <p>
+                  Search instantly, review identity details, and keep each member's core records
+                  arranged in a format that is easy to scan during daily gym operations.
+                </p>
+              </div>
+              <div class="members-hero-stats" aria-hidden="true">
+                <article>
+                  <span>Registered members</span>
+                  <strong>128</strong>
+                </article>
+                <article>
+                  <span>Profiles verified</span>
+                  <strong>119</strong>
+                </article>
+                <article>
+                  <span>Pending updates</span>
+                  <strong>09</strong>
+                </article>
+              </div>
+            </header>
+
+            <section class="members-toolbar">
+              <label class="members-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="6.5" />
+                  <path d="m16 16 4.5 4.5" />
+                </svg>
+                <input
+                  type="search"
+                  placeholder="Search by name, contact, email, address, or document proof"
+                  aria-label="Search members"
+                  data-member-search
+                />
+              </label>
+              <div class="members-toolbar-copy">
+                <span>Live member records</span>
+                <strong data-member-count>3 profiles</strong>
+              </div>
+            </section>
+            <section class="members-actions">
+              <div class="members-actions-copy">
+                <span class="members-actions-kicker">Quick Action</span>
+                <strong>Add and organize member records with one smooth, premium workflow.</strong>
+              </div>
+              <button class="add-member-btn" type="button" data-add-member-open>
+                <span>+</span>
+                Add New Member
+              </button>
+            </section>
+
+            <section class="members-table-wrap" data-members-grid>
+              <table class="members-table">
+                <colgroup>
+                <col class="col-photo" />
+                <col class="col-name" />
+                <col class="col-contact" />
+                <col class="col-contact" />
+                  <col class="col-email" />
+                  <col class="col-dob" />
+                  <col class="col-age" />
+                  <col class="col-joined-date" />
+                  <col class="col-joined-time" />
+                  <col class="col-measure" />
+                  <col class="col-measure" />
+                  <col class="col-address" />
+                  <col class="col-docs" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Contact Number</th>
+                    <th>Alternate Contact</th>
+                    <th>Email</th>
+                    <th>Date of Birth</th>
+                    <th>Age</th>
+                    <th>Joining Date</th>
+                    <th>Joining Time</th>
+                    <th>Height</th>
+                    <th>Weight</th>
+                    <th>Address</th>
+                    <th>Govt Docs / Residence Proof</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    data-member-card
+                    data-search="aarav sharma 9876543210 9123456780 aarav.sharma@example.com 15 march 1996 178 cm 74 kg 14 lakeview avenue andheri west mumbai maharashtra aadhaar electricity bill"
+                  >
+                    <td>
+                      <button class="member-photo-btn" type="button" data-photo-view aria-label="View Aarav Sharma photo">
+                        <img
+                          class="member-photo"
+                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=AaravSharma"
+                          alt="Aarav Sharma"
+                          loading="lazy"
+                        />
+                      </button>
+                    </td>
+                    <td>Aarav Sharma</td>
+                    <td>+91 98765 43210</td>
+                    <td>+91 91234 56780</td>
+                    <td>aarav.sharma@example.com</td>
+                    <td data-member-dob="1996-03-15">15 March 1996</td>
+                    <td data-member-age></td>
+                    <td data-member-joined-date="2026-01-04">4 January 2026</td>
+                    <td data-member-joined-time="07:45">7:45 AM</td>
+                    <td>178 cm</td>
+                    <td>74 kg</td>
+                    <td>14 Lakeview Avenue, Andheri West, Mumbai, Maharashtra</td>
+                    <td>
+                      <div class="doc-cell">
+                        <span>Aadhaar Card, Electricity Bill</span>
+                        <button class="doc-view-btn" type="button">View Document</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-member-card
+                    data-search="siya mehta 9811122233 9898981212 siya.mehta@example.com 2 july 1999 165 cm 58 kg 22 sunrise enclave satellite ahmedabad gujarat passport rent agreement"
+                  >
+                    <td>
+                      <button class="member-photo-btn" type="button" data-photo-view aria-label="View Siya Mehta photo">
+                        <img
+                          class="member-photo"
+                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=SiyaMehta"
+                          alt="Siya Mehta"
+                          loading="lazy"
+                        />
+                      </button>
+                    </td>
+                    <td>Siya Mehta</td>
+                    <td>+91 98111 22233</td>
+                    <td>+91 98989 81212</td>
+                    <td>siya.mehta@example.com</td>
+                    <td data-member-dob="1999-07-02">2 July 1999</td>
+                    <td data-member-age></td>
+                    <td data-member-joined-date="2026-02-16">16 February 2026</td>
+                    <td data-member-joined-time="18:10">6:10 PM</td>
+                    <td>165 cm</td>
+                    <td>58 kg</td>
+                    <td>22 Sunrise Enclave, Satellite, Ahmedabad, Gujarat</td>
+                    <td>
+                      <div class="doc-cell">
+                        <span>Passport, Rent Agreement</span>
+                        <button class="doc-view-btn" type="button">View Document</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    data-member-card
+                    data-search="rohan verma 9900012345 9845012345 rohan.verma@example.com 28 november 1993 182 cm 81 kg 9 cedar park indiranagar bengaluru karnataka pan card bank statement"
+                  >
+                    <td>
+                      <button class="member-photo-btn" type="button" data-photo-view aria-label="View Rohan Verma photo">
+                        <img
+                          class="member-photo"
+                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=RohanVerma"
+                          alt="Rohan Verma"
+                          loading="lazy"
+                        />
+                      </button>
+                    </td>
+                    <td>Rohan Verma</td>
+                    <td>+91 99000 12345</td>
+                    <td>+91 98450 12345</td>
+                    <td>rohan.verma@example.com</td>
+                    <td data-member-dob="1993-11-28">28 November 1993</td>
+                    <td data-member-age></td>
+                    <td data-member-joined-date="2026-03-02">2 March 2026</td>
+                    <td data-member-joined-time="06:25">6:25 AM</td>
+                    <td>182 cm</td>
+                    <td>81 kg</td>
+                    <td>9 Cedar Park, Indiranagar, Bengaluru, Karnataka</td>
+                    <td>
+                      <div class="doc-cell">
+                        <span>PAN Card, Bank Statement</span>
+                        <button class="doc-view-btn" type="button">View Document</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="members-empty" data-members-empty hidden>
+              <p>No members matched your search. Try a name, number, email, or document keyword.</p>
+            </section>
+          </div>
+        </section>
+        <section class="coming-soon-stage" data-stage="coming-soon" aria-live="polite" aria-hidden="true">
+          <div class="coming-soon-shell">
+            <div class="coming-soon-copy">
+              <p class="coming-soon-kicker">GymDeck Workspace</p>
+              <h1 class="coming-soon-title">Coming Soon</h1>
+              <p class="coming-soon-text">
+                <span class="coming-soon-feature">Members</span>
+                is being shaped into a focused workspace with live tools, polished flows, and richer gym management controls.
+              </p>
+              <div class="coming-soon-actions">
+                <button class="coming-soon-btn primary" type="button" data-view-target="dashboard">Back to Dashboard</button>
+                <button class="coming-soon-btn secondary" type="button" data-view-target="members">Open Next Preview</button>
+              </div>
+            </div>
+            <div class="coming-soon-visual" aria-hidden="true">
+              <div class="coming-orbit orbit-a"></div>
+              <div class="coming-orbit orbit-b"></div>
+              <div class="coming-card">
+                <span>Launch window</span>
+                <strong>Design system in progress</strong>
+                <p>Fresh flows for operations, attendance, billing, and coaching are on the way.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
