@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GymDeck OTP Verification</title>
+    <script>
+      const enterMode = sessionStorage.getItem("gymdeck-enter");
+      if (enterMode === "auth" || enterMode === "logout") {
+        document.documentElement.classList.add("auth-enter");
+      }
+    </script>
+    <link rel="preconnect" href="/" />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <script>
+      // Immediate boot sequence to prevent dark flash
+      (function() {
+        document.documentElement.style.backgroundColor = '#f8fafc';
+        document.documentElement.classList.add('app-loading');
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/modulepreload-polyfill-YP0FEG5d.js"></script>
+    <script type="module" crossorigin src="/assets/vendor-KxdrB71G.js"></script>
+    <script type="module" crossorigin src="/assets/script-Dmm7QGCx.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/script-BAm0e92m.css">
+  </head>
+  <body>
+    <main class="auth-page auth-page-otp">
+      <section class="auth-intro">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.5c1.05 3.98 2.03 4.97 6 6-3.97 1.03-4.95 2.02-6 6-1.05-3.98-2.03-4.97-6-6 3.97-1.03 4.95-2.02 6-6Z" />
+            </svg>
+          </span>
+          <span class="font-ethnocentric">GymDeck</span>
+        </a>
+
+        <div class="intro-copy">
+          <p class="eyebrow">Authentication system</p>
+          <h1>Verification gets its own clean screen so the final step feels obvious.</h1>
+          <p class="intro-text">
+            The OTP page stays close to your reference on smaller screens and keeps the
+            focus centered on the code entry action.
+          </p>
+        </div>
+
+        <div class="intro-metrics">
+          <article>
+            <strong>Verification step</strong>
+            <span>Dedicated OTP input with auto-advance behavior</span>
+          </article>
+          <article>
+            <strong>Recovery ready</strong>
+            <span>Works as a follow-up page after forgot password</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="auth-stage">
+        <article class="phone-card">
+          <header class="phone-status">
+            <span class="phone-time" aria-live="polite">9:41</span>
+            <div class="status-icons" aria-hidden="true">
+              <span class="signal"></span>
+              <span class="wifi"></span>
+              <span class="battery"></span>
+            </div>
+          </header>
+
+          <div class="phone-content">
+            <a class="back-chip" href="./forgot-password.html" aria-label="Go back">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m15 6-6 6 6 6" />
+              </svg>
+            </a>
+
+            <section class="auth-panel otp-panel">
+              <div class="panel-header">
+                <h2>Enter OTP Code</h2>
+                <p>
+                  Check your SMS. We've sent a one-time verification code to +99 923 123 124.
+                  Enter the code below to verify your account.
+                </p>
+              </div>
+
+              <form class="otp-form" action="../frontend/index.html" data-redirect="../frontend/index.html" data-enter-state="dashboard">
+                <div class="otp-grid" aria-label="One-time password">
+                  <input class="otp-slot" type="text" inputmode="numeric" maxlength="1" value="5" />
+                  <input class="otp-slot" type="text" inputmode="numeric" maxlength="1" value="4" />
+                  <input class="otp-slot" type="text" inputmode="numeric" maxlength="1" value="8" />
+                  <input class="otp-slot" type="text" inputmode="numeric" maxlength="1" value="5" />
+                  <input class="otp-slot" type="text" inputmode="numeric" maxlength="1" />
+                </div>
+
+                <button class="primary-btn" type="submit">Continue</button>
+              </form>
+
+              <p class="otp-note">Didn't get OTP? <a href="./forgot-password.html">Resend OTP</a></p>
+            </section>
+          </div>
+        </article>
+
+      </section>
+    </main>
+
+  </body>
+</html>

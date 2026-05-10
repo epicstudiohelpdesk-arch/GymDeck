@@ -1,3 +1,52 @@
+import { mountIntroScreen } from "./IntroScreen.jsx";
+
+// Initializing the app with the Intro sequence on launch or logout
+const initIntro = () => {
+  const authPage = document.querySelector(".auth-page");
+  const introShown = sessionStorage.getItem("gymdeck-intro-shown");
+  const enterMode = sessionStorage.getItem("gymdeck-enter");
+  
+  // Only show intro if:
+  // 1. First time in this session (introShown is null)
+  // 2. OR we specifically just logged out (enterMode is "logout")
+  const shouldShowIntro = !introShown || enterMode === "logout";
+
+  if (shouldShowIntro) {
+    mountIntroScreen(() => {
+      sessionStorage.setItem("gymdeck-intro-shown", "true");
+      sessionStorage.removeItem("gymdeck-enter");
+      
+      document.documentElement.classList.remove("app-loading");
+      document.documentElement.style.backgroundColor = "";
+      
+      if (authPage) {
+        authPage.classList.remove("is-loading");
+        document.documentElement.classList.add("auth-enter-active");
+      }
+    });
+  } else {
+    // Skip intro: immediately reveal the auth page
+    document.documentElement.classList.remove("app-loading");
+    document.documentElement.style.backgroundColor = "";
+    
+    if (authPage) {
+      authPage.classList.remove("is-loading");
+      // Ensure the entry class is present for standard transition
+      document.documentElement.classList.add("auth-enter");
+      
+      requestAnimationFrame(() => {
+        document.documentElement.classList.add("auth-enter-active");
+      });
+    }
+  }
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initIntro);
+} else {
+  initIntro();
+}
+
 const phoneTimeElements = document.querySelectorAll(".phone-time");
 
 if (phoneTimeElements.length > 0) {
@@ -69,6 +118,8 @@ otpSlots.forEach((slot, index) => {
   });
 });
 
+/* 
+// Handled by IntroScreen completion callback
 if (document.documentElement.classList.contains("auth-enter")) {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -79,6 +130,7 @@ if (document.documentElement.classList.contains("auth-enter")) {
     });
   });
 }
+*/
 
 const isAuthDestination = (destination) => {
   if (!destination) {
@@ -93,6 +145,24 @@ const isAuthDestination = (destination) => {
   }
 };
 
+const isDashboardDestination = (destination) => {
+  if (!destination) {
+    return false;
+  }
+
+  const destLower = destination.toLowerCase();
+  return destLower.includes("frontend") || destLower.includes("dashboard");
+};
+
+const rememberAuthenticatedSession = () => {
+  const rememberMe = document.querySelector('input[name="remember-me"], #remember-me');
+  const targetStorage = rememberMe?.checked ? localStorage : sessionStorage;
+
+  sessionStorage.removeItem("gymdeck-authenticated");
+  localStorage.removeItem("gymdeck-authenticated");
+  targetStorage.setItem("gymdeck-authenticated", "true");
+};
+
 const navigateWithTransition = (destination, enterState, trigger) => {
   if (!destination) {
     return;
@@ -100,8 +170,13 @@ const navigateWithTransition = (destination, enterState, trigger) => {
 
   const resolvedEnterState = enterState || (isAuthDestination(destination) ? "auth" : "");
 
+  if (isDashboardDestination(destination)) {
+    rememberAuthenticatedSession();
+  }
+
   if (resolvedEnterState) {
     sessionStorage.setItem("gymdeck-enter", resolvedEnterState);
+    console.log("GymDeck: Set gymdeck-enter to:", resolvedEnterState);
   } else {
     sessionStorage.removeItem("gymdeck-enter");
   }
@@ -114,11 +189,12 @@ const navigateWithTransition = (destination, enterState, trigger) => {
     }
   }
 
+  console.log("GymDeck: Navigating to:", destination);
   document.body.classList.add("is-transitioning");
 
   window.setTimeout(() => {
     window.location.href = destination;
-  }, 420);
+  }, 200);
 };
 
 document.querySelectorAll("form[data-redirect]").forEach((form) => {

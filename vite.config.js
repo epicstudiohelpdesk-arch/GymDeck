@@ -26,6 +26,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        authLogin: resolve(__dirname, 'authentication/index.html'),
+        signup: resolve(__dirname, 'authentication/signup.html'),
+        forgotPassword: resolve(__dirname, 'authentication/forgot-password.html'),
+        otp: resolve(__dirname, 'authentication/otp.html'),
         dashboard: resolve(__dirname, 'frontend/index.html'),
       },
       output: {

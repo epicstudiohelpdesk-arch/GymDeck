@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg-top: #f5f6f8;
   --bg-bottom: #e7ecf2;
@@ -61,15 +65,36 @@ svg {
   stroke-linejoin: round;
 }
 
+html.app-loading body,
+html.app-loading {
+  background: #f8fafc !important;
+}
+
+.auth-page {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 300ms ease;
+}
+
+.auth-page.is-loading {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
+}
+
 .auth-page {
   width: min(1360px, calc(100vw - 40px));
-  min-height: calc(100vh - 32px);
-  margin: 16px auto;
+  min-height: calc(100vh - 24px);
+  margin: 12px auto;
   padding:
-    clamp(18px, 2.2vw, 32px)
-    clamp(18px, 2.2vw, 32px)
-    clamp(18px, 2.2vw, 32px)
-    clamp(32px, 4vw, 64px);
+    clamp(14px, 1.8vw, 24px)
+    clamp(14px, 1.8vw, 24px)
+    clamp(14px, 1.8vw, 24px)
+    clamp(24px, 3.2vw, 48px);
   border-radius: 40px;
   background:
     linear-gradient(140deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.4)),
@@ -78,7 +103,7 @@ svg {
   box-shadow: var(--shadow-lg);
   display: grid;
   grid-template-columns: minmax(340px, 460px) minmax(460px, 1fr);
-  gap: clamp(28px, 3vw, 44px);
+  gap: clamp(20px, 2.4vw, 34px);
   align-items: center;
   overflow: hidden;
   position: relative;
@@ -279,7 +304,7 @@ body.is-transitioning .phone-card {
 
 .phone-card {
   width: min(100%, 450px);
-  min-height: 730px;
+  min-height: 640px;
   padding: 20px 20px 18px;
   border-radius: 38px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.94));
@@ -292,7 +317,7 @@ body.is-transitioning .phone-card {
 }
 
 .auth-page-signup .phone-card {
-  min-height: 688px;
+  min-height: 620px;
 }
 
 .auth-page-signup .panel-header {

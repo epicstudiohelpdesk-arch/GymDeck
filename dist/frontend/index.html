@@ -5,9 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GymDeck Dashboard</title>
     <script>
-      if (sessionStorage.getItem("gymdeck-enter") === "dashboard") {
+      (() => {
+        const authKey = "gymdeck-authenticated";
+        const isAuthenticated =
+          sessionStorage.getItem(authKey) === "true" ||
+          localStorage.getItem(authKey) === "true";
+
+        if (!isAuthenticated) {
+          sessionStorage.setItem("gymdeck-enter", "auth");
+          window.location.replace("../index.html");
+        }
+      })();
+    </script>
+    <script>
+      const mode = sessionStorage.getItem("gymdeck-enter");
+      console.log("GymDeck: Head script entry mode:", mode);
+      if (mode === "dashboard") {
         document.documentElement.classList.add("dashboard-enter");
-        sessionStorage.removeItem("gymdeck-enter");
+        // Removed removeItem here to allow script.js to detect login state
       }
     </script>
     <link rel="preconnect" href="/" />
@@ -15,8 +30,10 @@
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="preload" href="/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="dns-prefetch" href="https://api.dicebear.com" />
-    <script type="module" crossorigin src="/assets/dashboard-CJE-yV6q.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/dashboard-9b8gEs1F.css">
+    <script type="module" crossorigin src="/assets/dashboard-BMzDmpS0.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-YP0FEG5d.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-KxdrB71G.js">
+    <link rel="stylesheet" crossorigin href="/assets/dashboard-Bvi82XYy.css">
   </head>
   <body>
     <div class="page-shell">
@@ -29,135 +46,292 @@
               />
             </svg>
           </div>
-          <span>GymDeck</span>
+          <div class="brand-copy">
+            <strong><span class="font-ethnocentric tracking-normal">GymDeck</span></strong>
+            <span>Operations Hub</span>
+          </div>
+          <span class="brand-status" aria-label="Online"></span>
         </div>
 
-        <div class="sidebar-group sidebar-group-overview">
-          <p class="sidebar-title">Overview</p>
-          <nav class="nav-list">
-            <a class="nav-item active" href="#" data-view="dashboard" aria-current="page">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="3" width="8" height="18" rx="2" />
-                  <rect x="13" y="3" width="8" height="10" rx="2" />
-                  <rect x="13" y="15" width="8" height="6" rx="2" />
-                </svg>
-              </span>
-              Dashboard
-            </a>
-            <a class="nav-item" href="#" data-view="members">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5 7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 16.5v-9Z" />
-                  <path d="M5.8 9.2h12.4" />
-                </svg>
-              </span>
-              Members
-            </a>
-            <a class="nav-item" href="#" data-view="attendance">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 4h7a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2V4Z" />
-                  <path d="M15 9h3v11h-3" />
-                  <path d="M9 8h3" />
-                </svg>
-              </span>
-              Attendance
-            </a>
-            <a class="nav-item" href="#" data-view="payments">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="4" y="4" width="16" height="16" rx="3" />
-                  <path d="M8.5 12.2 10.8 14.5 15.8 9.5" />
-                  <path d="M8 7.5h8" />
-                </svg>
-              </span>
-              Payments
-            </a>
-            <a class="nav-item" href="#" data-view="trainers">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="9" cy="9" r="3" />
-                  <circle cx="16.5" cy="14.5" r="2.5" />
-                  <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
-                  <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
-                </svg>
-              </span>
-              Trainers
-            </a>
-            <a class="nav-item" href="#" data-view="personal-training">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="9" cy="9" r="3" />
-                  <circle cx="16.5" cy="14.5" r="2.5" />
-                  <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
-                  <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
-                </svg>
-              </span>
-              Personal Training
-            </a>
-            <a class="nav-item" href="#" data-view="notify-members">
-              <span class="icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="9" cy="9" r="3" />
-                  <circle cx="16.5" cy="14.5" r="2.5" />
-                  <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
-                  <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
-                </svg>
-              </span>
-              Notify Members
-            </a>
-          </nav>
-        </div>
+        <div class="sidebar-menu-shell">
+          <div class="sidebar-menu-scroll">
+            <div class="sidebar-group sidebar-group-overview">
+              <p class="sidebar-title">Core Operations</p>
+              <nav class="nav-list" aria-label="Primary operations">
+                <a class="nav-item active" href="#" data-view="dashboard" aria-current="page">
+                  <span class="icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="3" width="7" height="18" rx="2" />
+                      <rect x="14" y="3" width="7" height="8" rx="2" />
+                      <rect x="14" y="15" width="7" height="6" rx="2" />
+                    </svg>
+                  </span>
+                  <span class="nav-label">Dashboard</span>
+                </a>
 
-        <div class="sidebar-group sidebar-group-members">
-          <p class="sidebar-title">New Members</p>
-          <div class="friend-list">
-            <div class="friend">
-              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Bagas" alt="Bagas Mahpie" loading="lazy" />
-              <div>
-                <strong>Bagas Mahpie</strong>
-                <span>Friend</span>
-              </div>
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 19c-.4-2.4-2.1-3.6-5-3.6s-4.6 1.2-5 3.6" />
+                        <circle cx="11" cy="9" r="3.4" />
+                        <path d="M17 10.5a3 3 0 0 1 3 3" />
+                        <path d="M17 7.5a3 3 0 0 1 3 3" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Member Management</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="members">All Members</a>
+                    <a class="nav-subitem" href="#" data-add-member-open>Add New Member</a>
+                    <a class="nav-subitem" href="#" data-view="member-profiles">Member Profiles</a>
+                    <a class="nav-subitem" href="#" data-view="past-members">Past Members</a>
+                    <a class="nav-subitem" href="#" data-view="membership-plans">Membership Plans</a>
+                    <a class="nav-subitem" href="#" data-view="expiring-memberships">Expiring Memberships</a>
+                    <a class="nav-subitem" href="#" data-view="freeze-pause">Freeze / Pause</a>
+                  </div>
+                </div>
+
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 4h8l3 3v13H7z" />
+                        <path d="M14 4v4h4" />
+                        <path d="m9 13 2 2 4-4" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Attendance</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="attendance">Daily Check-in</a>
+                    <a class="nav-subitem" href="#" data-view="manual-entry">Manual Entry</a>
+                    <a class="nav-subitem" href="#" data-view="attendance-reports">Attendance Reports</a>
+                  </div>
+                </div>
+
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="4" y="4" width="16" height="16" rx="3" />
+                        <path d="M8.5 12.2 10.8 14.5 15.8 9.5" />
+                        <path d="M8 7.5h8" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Payments &amp; Billing</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="payments">Collect Fees</a>
+                    <a class="nav-subitem" href="#" data-view="pending-dues">Pending Dues</a>
+                    <a class="nav-subitem" href="#" data-view="payment-history">Payment History</a>
+                    <a class="nav-subitem" href="#" data-view="generate-receipt">Generate Receipt</a>
+                    <a class="nav-subitem" href="#" data-view="renew-membership">Renew Membership</a>
+                  </div>
+                </div>
+              </nav>
             </div>
-            <div class="friend">
-              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Dandy" alt="Sir Dandy" loading="lazy" />
-              <div>
-                <strong>Sir Dandy</strong>
-                <span>Old Friend</span>
-              </div>
+
+            <div class="sidebar-group sidebar-group-management">
+              <p class="sidebar-title">Management</p>
+              <nav class="nav-list" aria-label="Management">
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="9" cy="9" r="3" />
+                        <circle cx="16.5" cy="14.5" r="2.5" />
+                        <path d="M3.5 18c.8-2.7 2.8-4 5.5-4s4.7 1.3 5.5 4" />
+                        <path d="M13.5 18c.4-1.8 1.7-2.8 4-2.8 1.3 0 2.4.3 3 .8" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Trainers &amp; Staff</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="trainers">All Trainers</a>
+                    <a class="nav-subitem" href="#" data-view="assign-trainer">Assign Trainer</a>
+                    <a class="nav-subitem" href="#" data-view="trainer-schedule">Trainer Schedule</a>
+                    <a class="nav-subitem" href="#" data-view="staff-roles">Staff Roles</a>
+                  </div>
+                </div>
+
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 12h12" />
+                        <path d="M5 9v6" />
+                        <path d="M19 9v6" />
+                        <path d="M8 8v8" />
+                        <path d="M16 8v8" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Personal Training</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="personal-training">PT Clients</a>
+                    <a class="nav-subitem" href="#" data-view="pt-packages">PT Packages</a>
+                    <a class="nav-subitem" href="#" data-view="session-tracking">Session Tracking</a>
+                    <a class="nav-subitem" href="#" data-view="trainer-earnings">Trainer Earnings</a>
+                  </div>
+                </div>
+
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 12h3l8-5v10l-8-5H4z" />
+                        <path d="M18 9.5a4 4 0 0 1 0 5" />
+                        <path d="M20.5 7a7 7 0 0 1 0 10" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Communication</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="notify-members">Send Notification</a>
+                    <a class="nav-subitem" href="#" data-view="whatsapp-alerts">WhatsApp Alerts</a>
+                    <a class="nav-subitem" href="#" data-view="renewal-reminders">Renewal Reminders</a>
+                    <a class="nav-subitem" href="#" data-view="announcements">Announcements</a>
+                  </div>
+                </div>
+              </nav>
             </div>
-            <div class="friend">
-              <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jhon" alt="Jhon Tosan" loading="lazy" />
-              <div>
-                <strong>Jhon Tosan</strong>
-                <span>Friend</span>
-              </div>
+
+            <div class="sidebar-group sidebar-group-insights">
+              <p class="sidebar-title">Insights</p>
+              <nav class="nav-list" aria-label="Insights">
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 19V9" />
+                        <path d="M10 19V5" />
+                        <path d="M15 19v-7" />
+                        <path d="M20 19V7" />
+                        <path d="M4 19h17" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Reports &amp; Analytics</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="revenue-reports">Revenue Report</a>
+                    <a class="nav-subitem" href="#" data-view="attendance-analytics">Attendance Trends</a>
+                    <a class="nav-subitem" href="#" data-view="member-growth">Membership Growth</a>
+                    <a class="nav-subitem" href="#" data-view="trainer-performance">Trainer Performance</a>
+                  </div>
+                </div>
+
+                <div class="nav-dropdown" data-nav-dropdown>
+                  <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                    <span class="icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h3.2l1.8 2H17.5A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z" />
+                      </svg>
+                    </span>
+                    <span class="nav-label">Documents</span>
+                    <span class="nav-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <path d="m8 10 4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div class="nav-sublist">
+                    <a class="nav-subitem" href="#" data-view="documents">Member Documents</a>
+                    <a class="nav-subitem" href="#" data-view="id-proofs">ID Proofs</a>
+                    <a class="nav-subitem" href="#" data-view="agreements">Agreements</a>
+                  </div>
+                </div>
+              </nav>
             </div>
+          </div>
+          <div class="sidebar-scroll-indicator" data-sidebar-scroll-indicator aria-hidden="true">
+            <span data-sidebar-scroll-thumb></span>
           </div>
         </div>
 
-        <div class="sidebar-group sidebar-settings">
-          <p class="sidebar-title">Settings</p>
-          <a class="nav-item" href="#">
-            <span class="icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="3.2" />
-                <path d="m12 2 1 2.6 2.8.6-.7 2.8 2 2-2 2 .7 2.8-2.8.6L12 22l-1-2.6-2.8-.6.7-2.8-2-2 2-2-.7-2.8 2.8-.6L12 2Z" />
-              </svg>
-            </span>
-            Setting
-          </a>
-          <a class="nav-item logout" href="#">
-            <span class="icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M10 4H5v16h5" />
-                <path d="M13 8l5 4-5 4" />
-                <path d="M8 12h10" />
-              </svg>
-            </span>
-            Logout
-          </a>
+        <div class="sidebar-system">
+          <p class="sidebar-title">System</p>
+          <nav class="nav-list" aria-label="System">
+            <div class="nav-dropdown" data-nav-dropdown>
+              <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                <span class="icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3.2" />
+                    <path d="m12 2 1 2.6 2.8.6-.7 2.8 2 2-2 2 .7 2.8-2.8.6L12 22l-1-2.6-2.8-.6.7-2.8-2-2 2-2-.7-2.8 2.8-.6L12 2Z" />
+                  </svg>
+                </span>
+                <span class="nav-label">Settings</span>
+                <span class="nav-chevron" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="m8 10 4 4 4-4" />
+                  </svg>
+                </span>
+              </button>
+              <div class="nav-sublist">
+                <a class="nav-subitem" href="#" data-view="gym-profile">Gym Profile</a>
+                <a class="nav-subitem" href="#" data-view="membership-pricing">Membership Pricing</a>
+                <a class="nav-subitem" href="#" data-view="app-settings">App Settings</a>
+                <a class="nav-subitem" href="#" data-view="backup-restore">Backup &amp; Restore</a>
+                <a class="nav-subitem" href="#" data-view="sync-status">Device Sync (QR)</a>
+              </div>
+            </div>
+
+            <div class="nav-dropdown" data-nav-dropdown>
+              <button class="nav-item nav-parent" type="button" data-nav-dropdown-toggle aria-expanded="false">
+                <span class="icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.4" />
+                    <path d="M5.5 20c.8-3.6 3.1-5.4 6.5-5.4s5.7 1.8 6.5 5.4" />
+                  </svg>
+                </span>
+                <span class="nav-label">Account</span>
+                <span class="nav-chevron" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="m8 10 4 4 4-4" />
+                  </svg>
+                </span>
+              </button>
+              <div class="nav-sublist">
+                <a class="nav-subitem" href="#" data-view="account">Profile</a>
+                <a class="nav-subitem logout" href="#">Logout</a>
+              </div>
+            </div>
+          </nav>
         </div>
       </aside>
       <button class="sidebar-overlay" aria-label="Close menu"></button>
@@ -171,7 +345,7 @@
         hidden
       >
         <p class="logout-dialog-kicker">Confirm action</p>
-        <h2 id="logout-dialog-title">Log out of GymDeck?</h2>
+        <h2 id="logout-dialog-title">Log out of <span class="font-ethnocentric text-[0.85em] tracking-normal">GymDeck</span>?</h2>
         <p id="logout-dialog-copy">
           You’ll be redirected to the sign-in page. Do you really want to continue?
         </p>
@@ -420,563 +594,734 @@
 
       <main class="main-layout">
         <div class="dashboard-stage is-active" data-stage="dashboard">
-        <section class="content">
-          <header class="topbar">
-            <label class="searchbar">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="6.5" />
-                <path d="m16 16 4.5 4.5" />
-              </svg>
-              <input type="text" value="" placeholder="Search your course...." />
-            </label>
-
-            <div class="top-actions">
+          <section class="content dashboard-content">
+            <header class="topbar operations-topbar">
               <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar-menu">
                 <span></span>
                 <span></span>
                 <span></span>
               </button>
-              <button class="icon-btn" aria-label="messages">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5 7h14v10H5z" />
-                  <path d="m6.5 8.5 5.5 4 5.5-4" />
-                </svg>
-              </button>
-              <button class="icon-btn" aria-label="notifications">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 4a4 4 0 0 1 4 4v3.8l1.3 2.6H6.7L8 11.8V8a4 4 0 0 1 4-4Z" />
-                  <path d="M10 18a2 2 0 0 0 4 0" />
-                </svg>
-              </button>
-              <div class="profile-pill">
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jason" alt="Jason Ranti" loading="lazy" />
-                <span>Jason Ranti</span>
-              </div>
-            </div>
-          </header>
 
-          <section class="hero-card">
-            <div class="hero-text">
-              <p>Online Course</p>
-              <h1>Sharpen Your Skills with Professional Online Courses</h1>
-              <button class="join-btn">
-                Join Now
-                <span>
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m9 6 6 6-6 6" />
-                  </svg>
-                </span>
-              </button>
-            </div>
-            <div class="hero-stars" aria-hidden="true">
-              <span class="star star-a"></span>
-              <span class="star star-b"></span>
-              <span class="star star-c"></span>
-              <span class="star star-d"></span>
-            </div>
-          </section>
-
-          <section class="mini-course-row">
-            <article class="mini-course">
-              <div class="mini-icon lilac">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m7 7 10 10" />
-                  <path d="m17 7-3 3" />
-                  <path d="m10 14-3 3" />
-                  <path d="M8.5 5.5 5.5 8.5" />
-                  <path d="m18.5 15.5-3 3" />
-                </svg>
-              </div>
-              <div class="mini-copy">
-                <span>2/8 watched</span>
-                <strong>UI/UX Design</strong>
-              </div>
-              <button class="dots" aria-label="more">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="5" r="1.8" />
-                  <circle cx="12" cy="12" r="1.8" />
-                  <circle cx="12" cy="19" r="1.8" />
-                </svg>
-              </button>
-            </article>
-
-            <article class="mini-course">
-              <div class="mini-icon pink">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="5" y="5" width="10" height="10" rx="2" />
-                  <rect x="9" y="9" width="10" height="10" rx="2" />
-                </svg>
-              </div>
-              <div class="mini-copy">
-                <span>3/8 watched</span>
-                <strong>Branding</strong>
-              </div>
-              <button class="dots" aria-label="more">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="5" r="1.8" />
-                  <circle cx="12" cy="12" r="1.8" />
-                  <circle cx="12" cy="19" r="1.8" />
-                </svg>
-              </button>
-            </article>
-
-            <article class="mini-course">
-              <div class="mini-icon sky">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 4v4" />
-                  <path d="M17 4v4" />
-                  <rect x="4" y="6.5" width="16" height="13" rx="3" />
-                  <path d="M4 10h16" />
-                  <path d="M8 13h3" />
-                </svg>
-              </div>
-              <div class="mini-copy">
-                <span>6/12 watched</span>
-                <strong>Front End</strong>
-              </div>
-              <button class="dots" aria-label="more">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="5" r="1.8" />
-                  <circle cx="12" cy="12" r="1.8" />
-                  <circle cx="12" cy="19" r="1.8" />
-                </svg>
-              </button>
-            </article>
-          </section>
-
-          <section class="section-head">
-            <h2>Continue Watching</h2>
-            <div class="slider-nav">
-              <button aria-label="previous">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m14 6-6 6 6 6" />
-                </svg>
-              </button>
-              <button class="active" aria-label="next">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m10 6 6 6-6 6" />
-                </svg>
-              </button>
-            </div>
-          </section>
-
-          <section class="course-grid">
-            <article class="course-card">
-              <div class="course-image image-one">
-                <button class="heart-btn" aria-label="favorite">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m12 20-6.2-6a4 4 0 0 1 5.7-5.6L12 9l.5-.6a4 4 0 0 1 5.7 5.6Z" />
-                  </svg>
-                </button>
-              </div>
-              <span class="tag blue">Front End</span>
-              <h3>Beginner's Guide to Becoming a Professional Front-End Developer</h3>
-              <div class="progress-line"><span style="width: 74%"></span></div>
-              <div class="mentor-line">
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Leonardo" alt="Leonardo samsul" loading="lazy" />
-                <div>
-                  <strong>Leonardo samsul</strong>
-                  <span>Mentor</span>
-                </div>
-              </div>
-            </article>
-
-            <article class="course-card">
-              <div class="course-image image-two">
-                <button class="heart-btn" aria-label="favorite">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m12 20-6.2-6a4 4 0 0 1 5.7-5.6L12 9l.5-.6a4 4 0 0 1 5.7 5.6Z" />
-                  </svg>
-                </button>
-              </div>
-              <span class="tag lilac">UI/UX Design</span>
-              <h3>Optimizing User Experience with the Best UI/UX Design</h3>
-              <div class="progress-line"><span style="width: 56%"></span></div>
-              <div class="mentor-line">
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Bayu" alt="Bayu Salto" loading="lazy" />
-                <div>
-                  <strong>Bayu Salto</strong>
-                  <span>Mentor</span>
-                </div>
-              </div>
-            </article>
-
-            <article class="course-card">
-              <div class="course-image image-three">
-                <button class="heart-btn" aria-label="favorite">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m12 20-6.2-6a4 4 0 0 1 5.7-5.6L12 9l.5-.6a4 4 0 0 1 5.7 5.6Z" />
-                  </svg>
-                </button>
-              </div>
-              <span class="tag pink">Branding</span>
-              <h3>Reviving and Refreshing Company Image</h3>
-              <div class="progress-line"><span style="width: 48%"></span></div>
-              <div class="mentor-line">
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Padhang" alt="Padhang Satrio" loading="lazy" />
-                <div>
-                  <strong>Padhang Satrio</strong>
-                  <span>Mentor</span>
-                </div>
-              </div>
-            </article>
-          </section>
-
-          <section class="lesson-section">
-            <div class="section-head compact">
-              <h2>Your Lesson</h2>
-              <a href="#">See all</a>
-            </div>
-            <div class="lesson-table">
-              <div class="table-head">
-                <span>Mentor</span>
-                <span>Type</span>
-                <span>Desc</span>
-                <span>Action</span>
-              </div>
-              <div class="table-row">
-                <div class="mentor-cell">
-                  <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Padhang" alt="Padhang Satrio" loading="lazy" />
-                  <div>
-                    <strong>Padhang Satrio</strong>
-                    <span>2/16/2004</span>
-                  </div>
-                </div>
-                <div class="type-cell">
-                  <span class="tag lilac">UI/UX Design</span>
-                </div>
-                <div class="desc-cell">Understand Of UI/UX Design</div>
-                <div class="action-cell">
-                  <button class="launch-btn" aria-label="open lesson">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M8 16 16 8" />
-                      <path d="M10 8h6v6" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-        </section>
-
-        <aside class="rightbar">
-          <section class="rightbar-spotlight">
-            <div class="spotlight-copy">
-              <span class="spotlight-kicker">Today</span>
-              <h2>Stay on track with your learning pulse</h2>
-              <p>One glance for weekly energy, mentor activity, and lesson momentum.</p>
-            </div>
-            <div class="spotlight-stack" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </section>
-
-          <section class="stat-card">
-            <div class="card-top">
-              <h2>Statistic</h2>
-              <button class="dots" aria-label="more">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="5" r="1.8" />
-                  <circle cx="12" cy="12" r="1.8" />
-                  <circle cx="12" cy="19" r="1.8" />
-                </svg>
-              </button>
-            </div>
-
-            <div class="ring-wrap">
-              <div class="progress-ring">
-                <div class="progress-ring-inner">
-                  <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jason" alt="Jason avatar" loading="lazy" />
-                </div>
-                <span class="ring-badge">32%</span>
-              </div>
-            </div>
-
-            <h3>GoodMorning Jason <span>🔥</span></h3>
-            <p>Continue your learning to achieve your target!</p>
-
-            <div class="stat-pills">
-              <span class="stat-pill stat-pill-dark">12 lessons</span>
-              <span class="stat-pill">4 mentors</span>
-            </div>
-
-            <div class="chart-card">
-              <div class="chart-y">
-                <span>60</span>
-                <span>40</span>
-                <span>20</span>
-              </div>
-              <div class="chart-bars">
-                <div class="bar-group">
-                  <span class="bar light" style="height: 44%"></span>
-                  <span class="bar dark" style="height: 64%"></span>
-                  <span>1-10 Aug</span>
-                </div>
-                <div class="bar-group">
-                  <span class="bar light" style="height: 42%"></span>
-                  <span class="bar dark" style="height: 98%"></span>
-                  <span>11-20 Aug</span>
-                </div>
-                <div class="bar-group">
-                  <span class="bar light" style="height: 38%"></span>
-                  <span class="bar dark" style="height: 54%"></span>
-                  <span>21-30 Aug</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="mentor-card">
-            <div class="section-head compact right-head">
-              <h2>Your mentor</h2>
-              <button class="plus-btn" aria-label="add mentor">+</button>
-            </div>
-
-            <div class="mentor-rail">
-              <span class="mentor-rail-dot active"></span>
-              <span class="mentor-rail-dot"></span>
-              <span class="mentor-rail-dot"></span>
-            </div>
-
-            <div class="mentor-list">
-              <div class="mentor-item">
-                <div class="mentor-profile">
-                  <div class="mentor-avatar yellow">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=HatMentor" alt="Padhang Satrio" loading="lazy" />
-                  </div>
-                  <div>
-                    <strong>Padhang Satrio</strong>
-                    <span>Mentor</span>
-                  </div>
-                </div>
-                <span class="mentor-status">Available</span>
-                <button class="follow-btn">Follow</button>
-              </div>
-
-              <div class="mentor-item">
-                <div class="mentor-profile">
-                  <div class="mentor-avatar pink">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Zakir" alt="Zakir Horizontal" loading="lazy" />
-                  </div>
-                  <div>
-                    <strong>Zakir Horizontal</strong>
-                    <span>Mentor</span>
-                  </div>
-                </div>
-                <span class="mentor-status">In session</span>
-                <button class="follow-btn">Follow</button>
-              </div>
-
-              <div class="mentor-item">
-                <div class="mentor-profile">
-                  <div class="mentor-avatar sand">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Leonardo" alt="Leonardo Samsul" loading="lazy" />
-                  </div>
-                  <div>
-                    <strong>Leonardo Samsul</strong>
-                    <span>Mentor</span>
-                  </div>
-                </div>
-                <span class="mentor-status">Available</span>
-                <button class="follow-btn">Follow</button>
-              </div>
-            </div>
-
-            <button class="see-all-btn">See All</button>
-          </section>
-        </aside>
-        </div>
-        <section class="members-stage" data-stage="members" aria-hidden="true">
-          <div class="members-shell">
-            <header class="members-hero">
-              <div class="members-hero-copy">
-                <p class="members-kicker">Member Directory</p>
-                <h1>Manage every member profile from one clean workspace.</h1>
-                <p>
-                  Search instantly, review identity details, and keep each member's core records
-                  arranged in a format that is easy to scan during daily gym operations.
-                </p>
-              </div>
-              <div class="members-hero-stats" aria-hidden="true">
-                <article>
-                  <span>Registered members</span>
-                  <strong>128</strong>
-                </article>
-                <article>
-                  <span>Profiles verified</span>
-                  <strong>119</strong>
-                </article>
-                <article>
-                  <span>Pending updates</span>
-                  <strong>09</strong>
-                </article>
-              </div>
-            </header>
-
-            <section class="members-toolbar">
-              <label class="members-search">
+              <label class="searchbar operations-search">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="11" cy="11" r="6.5" />
                   <path d="m16 16 4.5 4.5" />
                 </svg>
-                <input
-                  type="search"
-                  placeholder="Search by name, contact, email, address, or document proof"
-                  aria-label="Search members"
-                  data-member-search
-                />
+                <input type="text" value="" placeholder="Search members, dues, check-ins, trainers..." />
               </label>
-              <div class="members-toolbar-copy">
-                <span>Live member records</span>
-                <strong data-member-count>3 profiles</strong>
+
+              <div class="top-actions operations-actions">
+                <span class="ops-date-chip">Sat, 02 May</span>
+                <span class="sync-status syncing">
+                  <span></span>
+                  Syncing
+                </span>
+                <button class="icon-btn" aria-label="messages">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 7h14v10H5z" />
+                    <path d="m6.5 8.5 5.5 4 5.5-4" />
+                  </svg>
+                </button>
+                <button class="icon-btn" aria-label="notifications">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 4a4 4 0 0 1 4 4v3.8l1.3 2.6H6.7L8 11.8V8a4 4 0 0 1 4-4Z" />
+                    <path d="M10 18a2 2 0 0 0 4 0" />
+                  </svg>
+                </button>
               </div>
-            </section>
-            <section class="members-actions">
-              <div class="members-actions-copy">
-                <span class="members-actions-kicker">Quick Action</span>
-                <strong>Add and organize member records with one smooth, premium workflow.</strong>
+            </header>
+
+            <section class="operations-hero">
+              <div class="command-copy">
+                <p class="dashboard-kicker">Live Command Center</p>
+                <h1>Today’s floor, collections, retention, and staff load in one operating view.</h1>
+                <p>
+                  Monitor member traffic, dues, renewals, PT sessions, and offline sync health without leaving the dashboard.
+                </p>
+                <div class="command-actions">
+                  <button class="table-action add-member-inline" type="button" data-add-member-open>
+                    <span>+</span>
+                    Add Member
+                  </button>
+                  <button class="table-action" type="button" data-view-target="pending-dues">Review Dues</button>
+                  <button class="table-action muted" type="button" data-view-target="attendance">Check-ins</button>
+                </div>
               </div>
-              <button class="add-member-btn" type="button" data-add-member-open>
-                <span>+</span>
-                Add New Member
-              </button>
+
+              <div class="hero-command-card" aria-label="Live floor summary">
+                <div>
+                  <span>Floor Load</span>
+                  <strong>43 active</strong>
+                  <p>Expected peak in 38 min</p>
+                </div>
+                <div class="capacity-strip" aria-hidden="true">
+                  <span style="height: 38%"></span>
+                  <span style="height: 52%"></span>
+                  <span style="height: 68%"></span>
+                  <span style="height: 82%"></span>
+                  <span style="height: 74%"></span>
+                  <span style="height: 56%"></span>
+                </div>
+              </div>
             </section>
 
-            <section class="members-table-wrap" data-members-grid>
-              <table class="members-table">
-                <colgroup>
-                <col class="col-photo" />
-                <col class="col-name" />
-                <col class="col-contact" />
-                <col class="col-contact" />
-                  <col class="col-email" />
-                  <col class="col-dob" />
-                  <col class="col-age" />
-                  <col class="col-joined-date" />
-                  <col class="col-joined-time" />
-                  <col class="col-measure" />
-                  <col class="col-measure" />
-                  <col class="col-address" />
-                  <col class="col-docs" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Contact Number</th>
-                    <th>Alternate Contact</th>
-                    <th>Email</th>
-                    <th>Date of Birth</th>
-                    <th>Age</th>
-                    <th>Joining Date</th>
-                    <th>Joining Time</th>
-                    <th>Height</th>
-                    <th>Weight</th>
-                    <th>Address</th>
-                    <th>Govt Docs / Residence Proof</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    data-member-card
-                    data-search="aarav sharma 9876543210 9123456780 aarav.sharma@example.com 15 march 1996 178 cm 74 kg 14 lakeview avenue andheri west mumbai maharashtra aadhaar electricity bill"
-                  >
-                    <td>
-                      <button class="member-photo-btn" type="button" data-photo-view aria-label="View Aarav Sharma photo">
-                        <img
-                          class="member-photo"
-                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=AaravSharma"
-                          alt="Aarav Sharma"
-                          loading="lazy"
-                        />
-                      </button>
-                    </td>
-                    <td>Aarav Sharma</td>
-                    <td>+91 98765 43210</td>
-                    <td>+91 91234 56780</td>
-                    <td>aarav.sharma@example.com</td>
-                    <td data-member-dob="1996-03-15">15 March 1996</td>
-                    <td data-member-age></td>
-                    <td data-member-joined-date="2026-01-04">4 January 2026</td>
-                    <td data-member-joined-time="07:45">7:45 AM</td>
-                    <td>178 cm</td>
-                    <td>74 kg</td>
-                    <td>14 Lakeview Avenue, Andheri West, Mumbai, Maharashtra</td>
-                    <td>
-                      <div class="doc-cell">
-                        <span>Aadhaar Card, Electricity Bill</span>
-                        <button class="doc-view-btn" type="button">View Document</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr
-                    data-member-card
-                    data-search="siya mehta 9811122233 9898981212 siya.mehta@example.com 2 july 1999 165 cm 58 kg 22 sunrise enclave satellite ahmedabad gujarat passport rent agreement"
-                  >
-                    <td>
-                      <button class="member-photo-btn" type="button" data-photo-view aria-label="View Siya Mehta photo">
-                        <img
-                          class="member-photo"
-                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=SiyaMehta"
-                          alt="Siya Mehta"
-                          loading="lazy"
-                        />
-                      </button>
-                    </td>
-                    <td>Siya Mehta</td>
-                    <td>+91 98111 22233</td>
-                    <td>+91 98989 81212</td>
-                    <td>siya.mehta@example.com</td>
-                    <td data-member-dob="1999-07-02">2 July 1999</td>
-                    <td data-member-age></td>
-                    <td data-member-joined-date="2026-02-16">16 February 2026</td>
-                    <td data-member-joined-time="18:10">6:10 PM</td>
-                    <td>165 cm</td>
-                    <td>58 kg</td>
-                    <td>22 Sunrise Enclave, Satellite, Ahmedabad, Gujarat</td>
-                    <td>
-                      <div class="doc-cell">
-                        <span>Passport, Rent Agreement</span>
-                        <button class="doc-view-btn" type="button">View Document</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr
-                    data-member-card
-                    data-search="rohan verma 9900012345 9845012345 rohan.verma@example.com 28 november 1993 182 cm 81 kg 9 cedar park indiranagar bengaluru karnataka pan card bank statement"
-                  >
-                    <td>
-                      <button class="member-photo-btn" type="button" data-photo-view aria-label="View Rohan Verma photo">
-                        <img
-                          class="member-photo"
-                          src="https://api.dicebear.com/7.x/adventurer/svg?seed=RohanVerma"
-                          alt="Rohan Verma"
-                          loading="lazy"
-                        />
-                      </button>
-                    </td>
-                    <td>Rohan Verma</td>
-                    <td>+91 99000 12345</td>
-                    <td>+91 98450 12345</td>
-                    <td>rohan.verma@example.com</td>
-                    <td data-member-dob="1993-11-28">28 November 1993</td>
-                    <td data-member-age></td>
-                    <td data-member-joined-date="2026-03-02">2 March 2026</td>
-                    <td data-member-joined-time="06:25">6:25 AM</td>
-                    <td>182 cm</td>
-                    <td>81 kg</td>
-                    <td>9 Cedar Park, Indiranagar, Bengaluru, Karnataka</td>
-                    <td>
-                      <div class="doc-cell">
-                        <span>PAN Card, Bank Statement</span>
-                        <button class="doc-view-btn" type="button">View Document</button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <section class="stats-grid" aria-label="Gym performance">
+              <article class="ops-stat-card">
+                <div class="stat-card-top">
+                  <div class="stat-icon members">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="9" cy="8" r="3" />
+                      <path d="M3.5 19c.7-3.4 2.6-5.2 5.5-5.2s4.8 1.8 5.5 5.2" />
+                      <path d="M16 11.5a3 3 0 0 1 3 3" />
+                      <path d="M16 6.5a3 3 0 0 1 3 3" />
+                    </svg>
+                  </div>
+                  <small class="positive">+18</small>
+                </div>
+                <div>
+                  <span>Active members</span>
+                  <strong>428</strong>
+                  <p>72 premium, 41 PT clients, 18 freeze requests.</p>
+                </div>
+              </article>
+
+              <article class="ops-stat-card">
+                <div class="stat-card-top">
+                  <div class="stat-icon revenue">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M7 5h10" />
+                      <path d="M7 9h10" />
+                      <path d="M8 5c6 0 6 10 0 10" />
+                      <path d="M8 15h2l7 4" />
+                    </svg>
+                  </div>
+                  <small class="positive">92%</small>
+                </div>
+                <div>
+                  <span>Collected this month</span>
+                  <strong>₹8.42L</strong>
+                  <p>₹74K left to reach the monthly target.</p>
+                </div>
+              </article>
+
+              <article class="ops-stat-card">
+                <div class="stat-card-top">
+                  <div class="stat-icon pending">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="4" y="5" width="16" height="14" rx="3" />
+                      <path d="M8 10h8" />
+                      <path d="M8 14h4" />
+                    </svg>
+                  </div>
+                  <small class="warning">31 due</small>
+                </div>
+                <div>
+                  <span>Pending dues</span>
+                  <strong>₹64.5K</strong>
+                  <p>12 invoices are more than 5 days overdue.</p>
+                </div>
+              </article>
+
+              <article class="ops-stat-card">
+                <div class="stat-card-top">
+                  <div class="stat-icon attendance">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M7 4h8l3 3v13H7z" />
+                      <path d="M14 4v4h4" />
+                      <path d="m9 13 2 2 4-4" />
+                    </svg>
+                  </div>
+                  <small class="neutral">74%</small>
+                </div>
+                <div>
+                  <span>Check-ins today</span>
+                  <strong>186</strong>
+                  <p>Evening occupancy is tracking above average.</p>
+                </div>
+              </article>
+            </section>
+
+            <section class="operations-grid operations-grid-primary">
+              <article class="analytics-panel revenue-panel">
+                <div class="panel-head">
+                  <div>
+                    <span>Revenue Pulse</span>
+                    <h2>Collections, renewals, and pending dues</h2>
+                  </div>
+                  <strong>May cycle</strong>
+                </div>
+                <div class="revenue-chart" aria-label="Monthly collections chart">
+                  <div class="chart-axis">
+                    <span>9L</span>
+                    <span>6L</span>
+                    <span>3L</span>
+                  </div>
+                  <div class="chart-columns">
+                    <div class="chart-month">
+                      <span class="col collected" style="height: 58%"></span>
+                      <span class="col pending" style="height: 24%"></span>
+                      <small>Nov</small>
+                    </div>
+                    <div class="chart-month">
+                      <span class="col collected" style="height: 68%"></span>
+                      <span class="col pending" style="height: 18%"></span>
+                      <small>Dec</small>
+                    </div>
+                    <div class="chart-month">
+                      <span class="col collected" style="height: 54%"></span>
+                      <span class="col pending" style="height: 30%"></span>
+                      <small>Jan</small>
+                    </div>
+                    <div class="chart-month">
+                      <span class="col collected" style="height: 72%"></span>
+                      <span class="col pending" style="height: 21%"></span>
+                      <small>Feb</small>
+                    </div>
+                    <div class="chart-month">
+                      <span class="col collected" style="height: 80%"></span>
+                      <span class="col pending" style="height: 16%"></span>
+                      <small>Mar</small>
+                    </div>
+                    <div class="chart-month">
+                      <span class="col collected" style="height: 76%"></span>
+                      <span class="col pending" style="height: 22%"></span>
+                      <small>Apr</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="chart-legend">
+                  <span><i class="collected-dot"></i> Collected</span>
+                  <span><i class="pending-dot"></i> Pending</span>
+                  <span><i class="renewal-dot"></i> Renewal lift</span>
+                </div>
+              </article>
+
+              <article class="alerts-panel renewal-panel">
+                <div class="panel-head">
+                  <div>
+                    <span>Retention Queue</span>
+                    <h2>Renewals requiring action</h2>
+                  </div>
+                  <strong>18 expiring</strong>
+                </div>
+                <div class="renewal-stack">
+                  <div class="renewal-row">
+                    <span>Premium Annual</span>
+                    <strong>8</strong>
+                    <i style="width: 72%"></i>
+                  </div>
+                  <div class="renewal-row">
+                    <span>Monthly Fitness</span>
+                    <strong>6</strong>
+                    <i style="width: 56%"></i>
+                  </div>
+                  <div class="renewal-row">
+                    <span>PT Packages</span>
+                    <strong>4</strong>
+                    <i style="width: 38%"></i>
+                  </div>
+                </div>
+                <div class="alert-list compact">
+                  <div class="alert-item urgent">
+                    <span></span>
+                    <div>
+                      <strong>3 premium members need owner calls</strong>
+                      <p>High value renewals due before Friday.</p>
+                    </div>
+                  </div>
+                  <div class="alert-item warning">
+                    <span></span>
+                    <div>
+                      <strong>₹64,500 pending dues</strong>
+                      <p>Automated reminders can cover 19 invoices.</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </section>
+
+            <section class="operations-grid operations-grid-secondary">
+              <article class="analytics-panel floor-panel">
+                <div class="panel-head">
+                  <div>
+                    <span>Attendance Flow</span>
+                    <h2>Live capacity by time block</h2>
+                  </div>
+                  <strong>43 active now</strong>
+                </div>
+                <div class="traffic-lanes">
+                  <div>
+                    <span>6 AM</span>
+                    <i style="width: 48%"></i>
+                    <strong>31</strong>
+                  </div>
+                  <div>
+                    <span>10 AM</span>
+                    <i style="width: 34%"></i>
+                    <strong>18</strong>
+                  </div>
+                  <div>
+                    <span>2 PM</span>
+                    <i style="width: 42%"></i>
+                    <strong>24</strong>
+                  </div>
+                  <div>
+                    <span>6 PM</span>
+                    <i style="width: 88%"></i>
+                    <strong>87</strong>
+                  </div>
+                </div>
+              </article>
+
+              <article class="alerts-panel trainer-panel">
+                <div class="panel-head">
+                  <div>
+                    <span>Staff Load</span>
+                    <h2>Trainer schedule and PT utilization</h2>
+                  </div>
+                  <strong>6 sessions left</strong>
+                </div>
+                <div class="trainer-list">
+                  <div>
+                    <span>AK</span>
+                    <div>
+                      <strong>Ankit Kumar</strong>
+                      <small>4 PT sessions, 1 trial</small>
+                    </div>
+                    <mark class="status active">On floor</mark>
+                  </div>
+                  <div>
+                    <span>SP</span>
+                    <div>
+                      <strong>Sneha Patel</strong>
+                      <small>2 sessions, nutrition consult</small>
+                    </div>
+                    <mark class="status pending">Next 7:30</mark>
+                  </div>
+                  <div>
+                    <span>MR</span>
+                    <div>
+                      <strong>Manav Rao</strong>
+                      <small>Equipment checks pending</small>
+                    </div>
+                    <mark class="status review">Review</mark>
+                  </div>
+                </div>
+              </article>
+            </section>
+
+            <section class="recent-members-panel">
+              <div class="panel-head">
+                <div>
+                  <span>Member Movement</span>
+                  <h2>Latest registrations, renewals, and billing status</h2>
+                </div>
+                <div class="recent-actions">
+                  <button class="table-action" type="button" data-view-target="members">View all</button>
+                  <button class="table-action add-member-inline" type="button" data-add-member-open>
+                    <span>+</span>
+                    Add Member
+                  </button>
+                </div>
+              </div>
+              <div class="recent-table-wrap">
+                <table class="recent-members-table">
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Plan</th>
+                      <th>Status</th>
+                      <th>Due</th>
+                      <th>Owner</th>
+                      <th>Last Visit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Rohan Verma</strong>
+                        <span>Indiranagar</span>
+                      </td>
+                      <td>Premium Annual</td>
+                      <td><mark class="status active">Active</mark></td>
+                      <td>₹0</td>
+                      <td>Front desk</td>
+                      <td>Today, 7:42 AM</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Aisha Khan</strong>
+                        <span>Koramangala</span>
+                      </td>
+                      <td>Monthly Fitness</td>
+                      <td><mark class="status pending">Due Soon</mark></td>
+                      <td>₹2,499</td>
+                      <td>Billing</td>
+                      <td>Yesterday</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Karthik Rao</strong>
+                        <span>BTM Layout</span>
+                      </td>
+                      <td>PT Package</td>
+                      <td><mark class="status review">Follow-up</mark></td>
+                      <td>₹8,000</td>
+                      <td>Trainer</td>
+                      <td>26 Apr</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Meera Nair</strong>
+                        <span>HSR Layout</span>
+                      </td>
+                      <td>Quarterly</td>
+                      <td><mark class="status active">Active</mark></td>
+                      <td>₹0</td>
+                      <td>Front desk</td>
+                      <td>Today, 6:18 PM</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <aside class="rightbar operations-rightbar">
+            <section class="side-panel attendance-panel">
+              <div class="panel-head">
+                <div>
+                  <span>Live Occupancy</span>
+                  <h2>Capacity used</h2>
+                </div>
+                <strong>74%</strong>
+              </div>
+              <div class="attendance-ring">
+                <strong>43</strong>
+                <span>members inside</span>
+              </div>
+              <div class="time-blocks">
+                <div>
+                  <span>Morning</span>
+                  <strong>68</strong>
+                </div>
+                <div>
+                  <span>Afternoon</span>
+                  <strong>31</strong>
+                </div>
+                <div>
+                  <span>Evening</span>
+                  <strong>87</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="side-panel sync-panel">
+              <div class="panel-head">
+                <div>
+                  <span>Local System</span>
+                  <h2>Sync status</h2>
+                </div>
+                <span class="sync-status online">
+                  <span></span>
+                  Online
+                </span>
+              </div>
+              <div class="sync-meter">
+                <strong>97%</strong>
+                <span>Data synced</span>
+              </div>
+              <div class="sync-states" aria-label="Connection states">
+                <span class="online">Online</span>
+                <span class="syncing">Syncing</span>
+                <span class="offline">Offline ready</span>
+              </div>
+              <div class="sync-list">
+                <p><strong>42</strong> records queued locally</p>
+                <p><strong>2</strong> devices pending handshake</p>
+                <p><strong>11:28 PM</strong> last successful sync</p>
+              </div>
+            </section>
+
+            <section class="side-panel task-panel">
+              <div class="panel-head">
+                <div>
+                  <span>Manager Queue</span>
+                  <h2>Priority actions</h2>
+                </div>
+              </div>
+              <div class="task-list">
+                <label>
+                  <input type="checkbox" />
+                  <span>Call 8 annual members for renewals</span>
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  <span>Verify 5 uploaded ID proofs</span>
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  <span>Assign trainer for 3 PT trials</span>
+                </label>
+              </div>
+            </section>
+          </aside>
+        </div>
+        <section class="members-stage" data-stage="members" aria-hidden="true">
+          <div class="members-shell">
+            <header class="members-command">
+              <div class="members-title-block">
+                <p class="members-kicker">Member Directory</p>
+                <h1>All Members</h1>
+                <p>
+                  A fast desktop workspace for searching profiles, checking identity details,
+                  and reviewing onboarding records without fighting a wide spreadsheet.
+                </p>
+              </div>
+              <div class="members-command-actions">
+                <button class="members-icon-btn" type="button" aria-label="Refresh member list">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+                    <path d="M20 5v6h-6" />
+                  </svg>
+                </button>
+                <button class="add-member-btn" type="button" data-add-member-open>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                  </svg>
+                  Add Member
+                </button>
+              </div>
+            </header>
+
+            <section class="members-overview" aria-label="Member overview">
+              <article class="members-stat-card primary">
+                <span>Loaded Profiles</span>
+                <strong>3</strong>
+                <p>Live records in the current directory view.</p>
+              </article>
+              <article class="members-stat-card">
+                <span>Verified Docs</span>
+                <strong>3</strong>
+                <p>Identity and residence proofs attached.</p>
+              </article>
+              <article class="members-stat-card">
+                <span>Joined This Quarter</span>
+                <strong>3</strong>
+                <p>Fresh registrations since January 2026.</p>
+              </article>
+              <article class="members-stat-card accent">
+                <span>Follow-ups</span>
+                <strong>0</strong>
+                <p>No profile update tasks are pending.</p>
+              </article>
+            </section>
+
+            <section class="members-workspace" aria-label="All members workspace">
+              <div class="members-toolbar">
+                <label class="members-search">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="6.5" />
+                    <path d="m16 16 4.5 4.5" />
+                  </svg>
+                  <input
+                    type="search"
+                    placeholder="Search name, phone, email, address, or document"
+                    aria-label="Search members"
+                    data-member-search
+                  />
+                </label>
+                <div class="members-filter-tabs" aria-label="Member filters">
+                  <button class="is-active" type="button" data-member-filter="all">All</button>
+                  <button type="button" data-member-filter="verified">Verified</button>
+                  <button type="button" data-member-filter="recent">Recent</button>
+                </div>
+                <div class="members-toolbar-copy">
+                  <span>Showing</span>
+                  <strong data-member-count>3 profiles</strong>
+                </div>
+              </div>
+
+              <div class="members-table-panel">
+                <div class="members-table-meta">
+                  <div>
+                    <span>Directory</span>
+                    <strong>Identity, contact, joining, and document records</strong>
+                  </div>
+                  <span class="members-table-status">Updated today</span>
+                </div>
+
+                <section class="members-table-wrap" data-members-grid>
+                  <table class="members-table">
+                    <thead>
+                      <tr>
+                        <th>Member</th>
+                        <th>Contact</th>
+                        <th>Personal</th>
+                        <th>Joined</th>
+                        <th>Address</th>
+                        <th>Govt Docs / Residence Proof</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        data-member-card
+                        data-member-id="GYM-MBR-0403"
+                        data-member-name="Aarav Sharma"
+                        data-member-status="verified"
+                        data-member-recent="false"
+                        data-search="aarav sharma 9876543210 9123456780 aarav.sharma@example.com 15 march 1996 178 cm 74 kg 14 lakeview avenue andheri west mumbai maharashtra aadhaar electricity bill"
+                      >
+                        <td data-label="Member">
+                          <button class="member-photo-btn" type="button" data-photo-view aria-label="View Aarav Sharma photo">
+                            <img
+                              class="member-photo"
+                              src="https://api.dicebear.com/7.x/adventurer/svg?seed=AaravSharma"
+                              alt="Aarav Sharma"
+                              loading="lazy"
+                            />
+                          </button>
+                          <div class="member-name-cell">
+                            <strong>Aarav Sharma</strong>
+                            <span>Premium Annual</span>
+                          </div>
+                        </td>
+                        <td data-label="Contact">
+                          <div class="member-stack">
+                            <span><b>Primary</b> +91 98765 43210</span>
+                            <span><b>Alternate</b> +91 91234 56780</span>
+                            <span><b>Email</b> aarav.sharma@example.com</span>
+                          </div>
+                        </td>
+                        <td data-label="Personal">
+                          <div class="member-metrics">
+                            <span data-member-dob="1996-03-15"><b>DOB</b> 15 March 1996</span>
+                            <span data-member-age><b>Age</b></span>
+                            <span><b>Height</b> 178 cm</span>
+                            <span><b>Weight</b> 74 kg</span>
+                          </div>
+                        </td>
+                        <td data-label="Joined">
+                          <div class="member-metrics">
+                            <span data-member-joined-date="2026-01-04"><b>Date</b> 4 January 2026</span>
+                            <span data-member-joined-time="07:45"><b>Time</b> 7:45 AM</span>
+                          </div>
+                        </td>
+                        <td data-label="Address">14 Lakeview Avenue, Andheri West, Mumbai, Maharashtra</td>
+                        <td data-label="Documents">
+                          <div class="doc-cell">
+                            <span>Aadhaar Card, Electricity Bill</span>
+                            <button class="doc-view-btn" type="button">View Document</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr
+                        data-member-card
+                        data-member-id="GYM-MBR-0441"
+                        data-member-name="Siya Mehta"
+                        data-member-status="verified"
+                        data-member-recent="true"
+                        data-search="siya mehta 9811122233 9898981212 siya.mehta@example.com 2 july 1999 165 cm 58 kg 22 sunrise enclave satellite ahmedabad gujarat passport rent agreement"
+                      >
+                        <td data-label="Member">
+                          <button class="member-photo-btn" type="button" data-photo-view aria-label="View Siya Mehta photo">
+                            <img
+                              class="member-photo"
+                              src="https://api.dicebear.com/7.x/adventurer/svg?seed=SiyaMehta"
+                              alt="Siya Mehta"
+                              loading="lazy"
+                            />
+                          </button>
+                          <div class="member-name-cell">
+                            <strong>Siya Mehta</strong>
+                            <span>Quarterly Fitness</span>
+                          </div>
+                        </td>
+                        <td data-label="Contact">
+                          <div class="member-stack">
+                            <span><b>Primary</b> +91 98111 22233</span>
+                            <span><b>Alternate</b> +91 98989 81212</span>
+                            <span><b>Email</b> siya.mehta@example.com</span>
+                          </div>
+                        </td>
+                        <td data-label="Personal">
+                          <div class="member-metrics">
+                            <span data-member-dob="1999-07-02"><b>DOB</b> 2 July 1999</span>
+                            <span data-member-age><b>Age</b></span>
+                            <span><b>Height</b> 165 cm</span>
+                            <span><b>Weight</b> 58 kg</span>
+                          </div>
+                        </td>
+                        <td data-label="Joined">
+                          <div class="member-metrics">
+                            <span data-member-joined-date="2026-02-16"><b>Date</b> 16 February 2026</span>
+                            <span data-member-joined-time="18:10"><b>Time</b> 6:10 PM</span>
+                          </div>
+                        </td>
+                        <td data-label="Address">22 Sunrise Enclave, Satellite, Ahmedabad, Gujarat</td>
+                        <td data-label="Documents">
+                          <div class="doc-cell">
+                            <span>Passport, Rent Agreement</span>
+                            <button class="doc-view-btn" type="button">View Document</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr
+                        data-member-card
+                        data-member-id="GYM-MBR-0428"
+                        data-member-name="Rohan Verma"
+                        data-member-status="verified"
+                        data-member-recent="true"
+                        data-search="rohan verma 9900012345 9845012345 rohan.verma@example.com 28 november 1993 182 cm 81 kg 9 cedar park indiranagar bengaluru karnataka pan card bank statement"
+                      >
+                        <td data-label="Member">
+                          <button class="member-photo-btn" type="button" data-photo-view aria-label="View Rohan Verma photo">
+                            <img
+                              class="member-photo"
+                              src="https://api.dicebear.com/7.x/adventurer/svg?seed=RohanVerma"
+                              alt="Rohan Verma"
+                              loading="lazy"
+                            />
+                          </button>
+                          <div class="member-name-cell">
+                            <strong>Rohan Verma</strong>
+                            <span>PT + Strength Plan</span>
+                          </div>
+                        </td>
+                        <td data-label="Contact">
+                          <div class="member-stack">
+                            <span><b>Primary</b> +91 99000 12345</span>
+                            <span><b>Alternate</b> +91 98450 12345</span>
+                            <span><b>Email</b> rohan.verma@example.com</span>
+                          </div>
+                        </td>
+                        <td data-label="Personal">
+                          <div class="member-metrics">
+                            <span data-member-dob="1993-11-28"><b>DOB</b> 28 November 1993</span>
+                            <span data-member-age><b>Age</b></span>
+                            <span><b>Height</b> 182 cm</span>
+                            <span><b>Weight</b> 81 kg</span>
+                          </div>
+                        </td>
+                        <td data-label="Joined">
+                          <div class="member-metrics">
+                            <span data-member-joined-date="2026-03-02"><b>Date</b> 2 March 2026</span>
+                            <span data-member-joined-time="06:25"><b>Time</b> 6:25 AM</span>
+                          </div>
+                        </td>
+                        <td data-label="Address">9 Cedar Park, Indiranagar, Bengaluru, Karnataka</td>
+                        <td data-label="Documents">
+                          <div class="doc-cell">
+                            <span>PAN Card, Bank Statement</span>
+                            <button class="doc-view-btn" type="button">View Document</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+              </div>
             </section>
 
             <section class="members-empty" data-members-empty hidden>
@@ -984,10 +1329,878 @@
             </section>
           </div>
         </section>
+        <section class="member-profile-stage" data-stage="member-profile" aria-hidden="true">
+          <div class="member-profile-shell">
+            <header class="member-profile-page-head">
+              <div>
+                <p class="members-kicker">Member Profiles</p>
+                <h1>Customer lifecycle control</h1>
+                <p>Open any member card to manage identity, money, attendance, status, documents, and trainer notes in one focused workspace.</p>
+              </div>
+              <div class="member-profile-summary">
+                <span>Profiles loaded</span>
+                <strong>6</strong>
+              </div>
+            </header>
+
+            <section class="member-profile-directory" aria-label="All member profile cards">
+              <div class="member-profile-card-grid" data-profile-card-grid>
+                <article
+                  class="member-profile-record"
+                  data-profile-record
+                  data-name="Rohan Verma"
+                  data-initials="RV"
+                  data-status-label="Active"
+                  data-status-class="active"
+                  data-plan="PT + Strength Plan"
+                  data-member-id="GYM-MBR-0428"
+                  data-join-date="2 Mar 2026"
+                  data-trainer="Ankit Kumar"
+                  data-risk-score="84"
+                  data-risk-note="Renewal ready"
+                  data-age="32 years"
+                  data-gender="Male"
+                  data-height="182 cm"
+                  data-weight="81 kg"
+                  data-goal="Strength gain with 5 kg fat loss"
+                  data-phone="+91 99000 12345"
+                  data-whatsapp="+91 99000 12345"
+                  data-alternate="+91 98450 12345"
+                  data-email="rohan.verma@example.com"
+                  data-address="9 Cedar Park, Indiranagar, Bengaluru, Karnataka"
+                  data-checkins="18"
+                  data-last-visit="Today, 6:25 AM"
+                  data-visit-note="4 visits in the last 7 days"
+                  data-attendance-badge="Healthy"
+                  data-attendance-badge-class="success"
+                  data-plan-type="PT + Strength"
+                  data-duration="90 days"
+                  data-start-date="2 Mar 2026"
+                  data-end-date="30 May 2026"
+                  data-next-review="6 May 2026"
+                  data-total-paid="₹42,500"
+                  data-pending="₹4,500"
+                  data-last-payment="15 Apr 2026"
+                  data-payment-method="UPI"
+                  data-invoice-owner="Billing desk"
+                  data-payment-badge="Due"
+                  data-payment-badge-class="warning"
+                  data-days-left="28 days left"
+                  data-expiry-date="30 May"
+                  data-expiry-class="healthy"
+                  data-expiry-width="68%"
+                  data-detail-panel-class="healthy"
+                >
+                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
+                    <span class="card-avatar">RV</span>
+                    <span class="card-main">
+                      <strong>Rohan Verma</strong>
+                      <small>GYM-MBR-0428 · PT + Strength Plan</small>
+                    </span>
+                    <mark class="member-status-badge active"><span></span><b>Active</b></mark>
+                    <span class="card-metric"><small>Due</small><strong>₹4,500</strong></span>
+                    <span class="card-metric"><small>Last visit</small><strong>Today</strong></span>
+                    <span class="card-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
+                    </span>
+                  </button>
+                </article>
+
+                <article
+                  class="member-profile-record"
+                  data-profile-record
+                  data-name="Aisha Khan"
+                  data-initials="AK"
+                  data-status-label="Payment Due"
+                  data-status-class="due"
+                  data-plan="Monthly Fitness"
+                  data-member-id="GYM-MBR-0417"
+                  data-join-date="12 Jan 2026"
+                  data-trainer="Sneha Patel"
+                  data-risk-score="61"
+                  data-risk-note="Payment attention"
+                  data-age="29 years"
+                  data-gender="Female"
+                  data-height="167 cm"
+                  data-weight="62 kg"
+                  data-goal="Fat loss and conditioning"
+                  data-phone="+91 98111 22440"
+                  data-whatsapp="+91 98111 22440"
+                  data-alternate="+91 98111 22441"
+                  data-email="aisha.khan@example.com"
+                  data-address="18 Garden Street, Koramangala, Bengaluru, Karnataka"
+                  data-checkins="9"
+                  data-last-visit="Yesterday, 7:15 PM"
+                  data-visit-note="2 missed visits this week"
+                  data-attendance-badge="Watch"
+                  data-attendance-badge-class="warning"
+                  data-plan-type="Monthly Fitness"
+                  data-duration="30 days"
+                  data-start-date="18 Apr 2026"
+                  data-end-date="17 May 2026"
+                  data-next-review="8 May 2026"
+                  data-total-paid="₹18,000"
+                  data-pending="₹2,499"
+                  data-last-payment="18 Apr 2026"
+                  data-payment-method="Cash"
+                  data-invoice-owner="Billing desk"
+                  data-payment-badge="Due"
+                  data-payment-badge-class="warning"
+                  data-days-left="15 days left"
+                  data-expiry-date="17 May"
+                  data-expiry-class="healthy"
+                  data-expiry-width="52%"
+                  data-detail-panel-class="healthy"
+                >
+                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
+                    <span class="card-avatar">AK</span>
+                    <span class="card-main">
+                      <strong>Aisha Khan</strong>
+                      <small>GYM-MBR-0417 · Monthly Fitness</small>
+                    </span>
+                    <mark class="member-status-badge due"><span></span><b>Payment Due</b></mark>
+                    <span class="card-metric danger"><small>Due</small><strong>₹2,499</strong></span>
+                    <span class="card-metric"><small>Last visit</small><strong>Yesterday</strong></span>
+                    <span class="card-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
+                    </span>
+                  </button>
+                </article>
+
+                <article
+                  class="member-profile-record"
+                  data-profile-record
+                  data-name="Karthik Rao"
+                  data-initials="KR"
+                  data-status-label="Expired"
+                  data-status-class="expired"
+                  data-plan="PT Package"
+                  data-member-id="GYM-MBR-0398"
+                  data-join-date="7 Dec 2025"
+                  data-trainer="Manav Rao"
+                  data-risk-score="38"
+                  data-risk-note="Renewal blocked"
+                  data-age="35 years"
+                  data-gender="Male"
+                  data-height="176 cm"
+                  data-weight="78 kg"
+                  data-goal="Muscle gain"
+                  data-phone="+91 99002 44331"
+                  data-whatsapp="+91 99002 44331"
+                  data-alternate="+91 99002 44332"
+                  data-email="karthik.rao@example.com"
+                  data-address="44 Orchid Lane, BTM Layout, Bengaluru, Karnataka"
+                  data-checkins="4"
+                  data-last-visit="26 Apr 2026"
+                  data-visit-note="Low attendance risk"
+                  data-attendance-badge="Low"
+                  data-attendance-badge-class="warning"
+                  data-plan-type="PT Package"
+                  data-duration="60 days"
+                  data-start-date="25 Feb 2026"
+                  data-end-date="26 Apr 2026"
+                  data-next-review="Overdue"
+                  data-total-paid="₹24,000"
+                  data-pending="₹8,000"
+                  data-last-payment="25 Feb 2026"
+                  data-payment-method="UPI"
+                  data-invoice-owner="Trainer"
+                  data-payment-badge="Overdue"
+                  data-payment-badge-class="warning"
+                  data-days-left="Expired"
+                  data-expiry-date="26 Apr"
+                  data-expiry-class="danger"
+                  data-expiry-width="100%"
+                  data-detail-panel-class="danger"
+                >
+                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
+                    <span class="card-avatar">KR</span>
+                    <span class="card-main">
+                      <strong>Karthik Rao</strong>
+                      <small>GYM-MBR-0398 · PT Package</small>
+                    </span>
+                    <mark class="member-status-badge expired"><span></span><b>Expired</b></mark>
+                    <span class="card-metric danger"><small>Due</small><strong>₹8,000</strong></span>
+                    <span class="card-metric"><small>Last visit</small><strong>26 Apr</strong></span>
+                    <span class="card-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
+                    </span>
+                  </button>
+                </article>
+
+                <article
+                  class="member-profile-record"
+                  data-profile-record
+                  data-name="Meera Nair"
+                  data-initials="MN"
+                  data-status-label="Active"
+                  data-status-class="active"
+                  data-plan="Quarterly Fitness"
+                  data-member-id="GYM-MBR-0435"
+                  data-join-date="16 Feb 2026"
+                  data-trainer="Sneha Patel"
+                  data-risk-score="91"
+                  data-risk-note="Healthy member"
+                  data-age="27 years"
+                  data-gender="Female"
+                  data-height="164 cm"
+                  data-weight="57 kg"
+                  data-goal="Strength and mobility"
+                  data-phone="+91 98989 81212"
+                  data-whatsapp="+91 98989 81212"
+                  data-alternate="+91 98111 22233"
+                  data-email="meera.nair@example.com"
+                  data-address="31 HSR Main Road, Bengaluru, Karnataka"
+                  data-checkins="21"
+                  data-last-visit="Today, 6:18 PM"
+                  data-visit-note="6 visits in the last 7 days"
+                  data-attendance-badge="Healthy"
+                  data-attendance-badge-class="success"
+                  data-plan-type="Quarterly Fitness"
+                  data-duration="90 days"
+                  data-start-date="16 Feb 2026"
+                  data-end-date="16 May 2026"
+                  data-next-review="9 May 2026"
+                  data-total-paid="₹21,000"
+                  data-pending="₹0"
+                  data-last-payment="16 Feb 2026"
+                  data-payment-method="Card"
+                  data-invoice-owner="Front desk"
+                  data-payment-badge="Clear"
+                  data-payment-badge-class="success"
+                  data-days-left="14 days left"
+                  data-expiry-date="16 May"
+                  data-expiry-class="healthy"
+                  data-expiry-width="48%"
+                  data-detail-panel-class="healthy"
+                >
+                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
+                    <span class="card-avatar">MN</span>
+                    <span class="card-main">
+                      <strong>Meera Nair</strong>
+                      <small>GYM-MBR-0435 · Quarterly Fitness</small>
+                    </span>
+                    <mark class="member-status-badge active"><span></span><b>Active</b></mark>
+                    <span class="card-metric"><small>Due</small><strong>₹0</strong></span>
+                    <span class="card-metric"><small>Last visit</small><strong>Today</strong></span>
+                    <span class="card-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
+                    </span>
+                  </button>
+                </article>
+
+                <article
+                  class="member-profile-record"
+                  data-profile-record
+                  data-name="Aarav Sharma"
+                  data-initials="AS"
+                  data-status-label="Paused"
+                  data-status-class="paused"
+                  data-plan="Premium Annual"
+                  data-member-id="GYM-MBR-0403"
+                  data-join-date="4 Jan 2026"
+                  data-trainer="Ankit Kumar"
+                  data-risk-score="56"
+                  data-risk-note="Paused account"
+                  data-age="30 years"
+                  data-gender="Male"
+                  data-height="178 cm"
+                  data-weight="74 kg"
+                  data-goal="Lean muscle maintenance"
+                  data-phone="+91 98765 43210"
+                  data-whatsapp="+91 98765 43210"
+                  data-alternate="+91 91234 56780"
+                  data-email="aarav.sharma@example.com"
+                  data-address="14 Lakeview Avenue, Andheri West, Mumbai, Maharashtra"
+                  data-checkins="0"
+                  data-last-visit="Paused since 20 Apr"
+                  data-visit-note="Membership freeze active"
+                  data-attendance-badge="Paused"
+                  data-attendance-badge-class="neutral"
+                  data-plan-type="Premium Annual"
+                  data-duration="365 days"
+                  data-start-date="4 Jan 2026"
+                  data-end-date="4 Jan 2027"
+                  data-next-review="20 May 2026"
+                  data-total-paid="₹48,000"
+                  data-pending="₹0"
+                  data-last-payment="4 Jan 2026"
+                  data-payment-method="Bank transfer"
+                  data-invoice-owner="Front desk"
+                  data-payment-badge="Clear"
+                  data-payment-badge-class="success"
+                  data-days-left="Freeze active"
+                  data-expiry-date="4 Jan"
+                  data-expiry-class="warning"
+                  data-expiry-width="38%"
+                  data-detail-panel-class="warning"
+                >
+                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
+                    <span class="card-avatar">AS</span>
+                    <span class="card-main">
+                      <strong>Aarav Sharma</strong>
+                      <small>GYM-MBR-0403 · Premium Annual</small>
+                    </span>
+                    <mark class="member-status-badge paused"><span></span><b>Paused</b></mark>
+                    <span class="card-metric"><small>Due</small><strong>₹0</strong></span>
+                    <span class="card-metric"><small>Last visit</small><strong>Paused</strong></span>
+                    <span class="card-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
+                    </span>
+                  </button>
+                </article>
+
+                <article
+                  class="member-profile-record"
+                  data-profile-record
+                  data-name="Siya Mehta"
+                  data-initials="SM"
+                  data-status-label="Active"
+                  data-status-class="active"
+                  data-plan="Quarterly Fitness"
+                  data-member-id="GYM-MBR-0441"
+                  data-join-date="16 Feb 2026"
+                  data-trainer="Manav Rao"
+                  data-risk-score="78"
+                  data-risk-note="Good retention"
+                  data-age="26 years"
+                  data-gender="Female"
+                  data-height="165 cm"
+                  data-weight="58 kg"
+                  data-goal="Fat loss and strength"
+                  data-phone="+91 98111 22233"
+                  data-whatsapp="+91 98111 22233"
+                  data-alternate="+91 98989 81212"
+                  data-email="siya.mehta@example.com"
+                  data-address="22 Sunrise Enclave, Satellite, Ahmedabad, Gujarat"
+                  data-checkins="16"
+                  data-last-visit="1 May 2026"
+                  data-visit-note="Attendance trend stable"
+                  data-attendance-badge="Healthy"
+                  data-attendance-badge-class="success"
+                  data-plan-type="Quarterly Fitness"
+                  data-duration="90 days"
+                  data-start-date="16 Feb 2026"
+                  data-end-date="16 May 2026"
+                  data-next-review="7 May 2026"
+                  data-total-paid="₹19,500"
+                  data-pending="₹0"
+                  data-last-payment="16 Feb 2026"
+                  data-payment-method="UPI"
+                  data-invoice-owner="Front desk"
+                  data-payment-badge="Clear"
+                  data-payment-badge-class="success"
+                  data-days-left="14 days left"
+                  data-expiry-date="16 May"
+                  data-expiry-class="healthy"
+                  data-expiry-width="48%"
+                  data-detail-panel-class="healthy"
+                >
+                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
+                    <span class="card-avatar">SM</span>
+                    <span class="card-main">
+                      <strong>Siya Mehta</strong>
+                      <small>GYM-MBR-0441 · Quarterly Fitness</small>
+                    </span>
+                    <mark class="member-status-badge active"><span></span><b>Active</b></mark>
+                    <span class="card-metric"><small>Due</small><strong>₹0</strong></span>
+                    <span class="card-metric"><small>Last visit</small><strong>1 May</strong></span>
+                    <span class="card-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
+                    </span>
+                  </button>
+                </article>
+
+                <section class="profile-expand-panel" id="member-profile-expanded" data-profile-details-panel hidden>
+            <header class="profile-identity-strip" aria-label="Member identity">
+              <div class="profile-person">
+                <button class="profile-avatar" type="button" aria-label="View Rohan Verma profile photo">
+                  <span data-profile-field="initials">RV</span>
+                </button>
+                <div class="profile-title-block">
+                  <div class="profile-title-row">
+                    <h1 data-profile-field="name">Rohan Verma</h1>
+                    <mark class="member-status-badge active" data-profile-status-badge>
+                      <span></span>
+                      <b data-profile-field="statusLabel">Active</b>
+                    </mark>
+                  </div>
+                  <div class="profile-meta-row" aria-label="Member profile metadata">
+                    <span data-profile-field="plan">PT + Strength Plan</span>
+                    <span>ID: <b data-profile-field="memberId">GYM-MBR-0428</b></span>
+                    <span>Joined <b data-profile-field="joinDate">2 Mar 2026</b></span>
+                    <span>Trainer: <b data-profile-field="trainer">Ankit Kumar</b></span>
+                  </div>
+                </div>
+              </div>
+              <div class="profile-risk-panel" aria-label="Lifecycle status">
+                <span>Lifecycle Score</span>
+                <strong data-profile-field="riskScore">84</strong>
+                <small data-profile-field="riskNote">Renewal ready</small>
+              </div>
+            </header>
+
+            <section class="profile-action-bar" aria-label="Quick actions">
+              <button class="profile-action primary" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3.5" y="5" width="17" height="14" rx="3" />
+                  <path d="M3.5 9h17" />
+                  <path d="M7.5 15h4" />
+                </svg>
+                Collect Payment
+              </button>
+              <button class="profile-action" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+                  <path d="M20 5v6h-6" />
+                </svg>
+                Renew Membership
+              </button>
+              <button class="profile-action" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 4h8l3 3v13H7z" />
+                  <path d="M14 4v4h4" />
+                  <path d="m9 13 2 2 4-4" />
+                </svg>
+                Mark Attendance
+              </button>
+              <button class="profile-action" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 12h3l8-5v10l-8-5H4z" />
+                  <path d="M18 9.5a4 4 0 0 1 0 5" />
+                </svg>
+                Send Message
+              </button>
+              <button class="profile-action quiet" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m14.5 5.5 4 4" />
+                  <path d="M4 20h4.2L19 9.2 14.8 5 4 15.8z" />
+                </svg>
+                Edit Profile
+              </button>
+            </section>
+
+            <section class="profile-main-grid" aria-label="Member control panel">
+              <div class="profile-left-column">
+                <article class="profile-panel personal-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Core Identity</span>
+                      <h2>Personal Details</h2>
+                    </div>
+                    <strong data-profile-field="identityBadge">Verified</strong>
+                  </div>
+                  <div class="profile-info-grid compact">
+                    <div>
+                      <span>Age</span>
+                      <strong data-profile-field="age">32 years</strong>
+                    </div>
+                    <div>
+                      <span>Gender</span>
+                      <strong data-profile-field="gender">Male</strong>
+                    </div>
+                    <div>
+                      <span>Height</span>
+                      <strong data-profile-field="height">182 cm</strong>
+                    </div>
+                    <div>
+                      <span>Weight</span>
+                      <strong data-profile-field="weight">81 kg</strong>
+                    </div>
+                    <div class="wide">
+                      <span>Fitness Goal</span>
+                      <strong data-profile-field="goal">Strength gain with 5 kg fat loss</strong>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="profile-panel contact-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Contact</span>
+                      <h2>Reachability</h2>
+                    </div>
+                    <div class="profile-contact-actions">
+                      <a class="profile-mini-action" href="tel:+919900012345" data-profile-call>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8 9.7a16 16 0 0 0 6.3 6.3l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6A2 2 0 0 1 22 16.9Z" />
+                        </svg>
+                        Call
+                      </a>
+                      <a class="profile-mini-action whatsapp" href="https://wa.me/919900012345" data-profile-whatsapp>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M5.2 19.1 6 16.2a7.8 7.8 0 1 1 3 2.7z" />
+                          <path d="M9.4 8.7c.2 3 2 4.8 4.9 5.7" />
+                          <path d="m14.3 14.4 1.5-.8" />
+                          <path d="m8.9 8.2.7-1.5" />
+                        </svg>
+                        WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                  <div class="contact-list">
+                    <div>
+                      <span>Primary Phone</span>
+                      <strong data-profile-field="phone">+91 99000 12345</strong>
+                    </div>
+                    <div>
+                      <span>WhatsApp</span>
+                      <strong data-profile-field="whatsapp">+91 99000 12345</strong>
+                    </div>
+                    <div>
+                      <span>Alternate</span>
+                      <strong data-profile-field="alternate">+91 98450 12345</strong>
+                    </div>
+                    <div>
+                      <span>Email</span>
+                      <strong data-profile-field="email">rohan.verma@example.com</strong>
+                    </div>
+                    <div class="wide">
+                      <span>Address</span>
+                      <strong data-profile-field="address">9 Cedar Park, Indiranagar, Bengaluru, Karnataka</strong>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="profile-panel attendance-snapshot-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Activity</span>
+                      <h2>Attendance Snapshot</h2>
+                    </div>
+                    <strong class="success" data-profile-attendance-badge>Healthy</strong>
+                  </div>
+                  <div class="attendance-summary">
+                    <div class="attendance-primary">
+                      <span>This Month</span>
+                      <strong data-profile-field="checkins">18</strong>
+                      <small>Check-ins total</small>
+                    </div>
+                    <div class="attendance-detail">
+                      <span>Last Visit</span>
+                      <strong data-profile-field="lastVisit">Today, 6:25 AM</strong>
+                      <small data-profile-field="visitNote">4 visits in the last 7 days</small>
+                    </div>
+                    <div class="mini-attendance-chart" aria-label="Attendance trend">
+                      <span style="height: 42%"></span>
+                      <span style="height: 64%"></span>
+                      <span style="height: 52%"></span>
+                      <span style="height: 78%"></span>
+                      <span style="height: 68%"></span>
+                      <span style="height: 84%"></span>
+                      <span style="height: 72%"></span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="profile-panel plan-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Coaching</span>
+                      <h2>Trainer &amp; Plan Info</h2>
+                    </div>
+                    <strong data-profile-field="planBadge">PT Active</strong>
+                  </div>
+                  <div class="plan-info-grid">
+                    <div>
+                      <span>Assigned Trainer</span>
+                      <strong data-profile-field="trainerName">Ankit Kumar</strong>
+                    </div>
+                    <div>
+                      <span>Plan Type</span>
+                      <strong data-profile-field="planType">PT + Strength</strong>
+                    </div>
+                    <div>
+                      <span>Duration</span>
+                      <strong data-profile-field="duration">90 days</strong>
+                    </div>
+                    <div>
+                      <span>Start Date</span>
+                      <strong data-profile-field="startDate">2 Mar 2026</strong>
+                    </div>
+                    <div>
+                      <span>End Date</span>
+                      <strong data-profile-field="endDate">30 May 2026</strong>
+                    </div>
+                    <div>
+                      <span>Next Review</span>
+                      <strong data-profile-field="nextReview">6 May 2026</strong>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <aside class="profile-right-column" aria-label="Financial and risk status">
+                <article class="profile-panel payment-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Money</span>
+                      <h2>Payment Summary</h2>
+                    </div>
+                    <strong class="warning" data-profile-payment-badge>Due</strong>
+                  </div>
+                  <div class="payment-total-row">
+                    <div>
+                      <span>Total Paid</span>
+                      <strong data-profile-field="totalPaid">₹42,500</strong>
+                    </div>
+                    <div>
+                      <span>Pending</span>
+                      <strong data-profile-field="pending">₹4,500</strong>
+                    </div>
+                  </div>
+                  <dl class="payment-facts">
+                    <div>
+                      <dt>Last payment</dt>
+                      <dd data-profile-field="lastPayment">15 Apr 2026</dd>
+                    </div>
+                    <div>
+                      <dt>Payment method</dt>
+                      <dd data-profile-field="paymentMethod">UPI</dd>
+                    </div>
+                    <div>
+                      <dt>Invoice owner</dt>
+                      <dd data-profile-field="invoiceOwner">Billing desk</dd>
+                    </div>
+                  </dl>
+                </article>
+
+                <article class="profile-panel status-panel healthy" data-profile-status-panel>
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Membership</span>
+                      <h2>Status Card</h2>
+                    </div>
+                    <strong data-profile-field="daysLeft">28 days left</strong>
+                  </div>
+                  <div class="expiry-meter healthy" aria-label="Membership time remaining" data-profile-expiry-meter>
+                    <strong data-profile-field="expiryDate">30 May</strong>
+                    <span>Expiry Date</span>
+                    <i style="width: 68%" data-profile-expiry-bar></i>
+                  </div>
+                  <div class="status-facts">
+                    <div>
+                      <span>Plan Name</span>
+                      <strong data-profile-field="statusPlan">PT + Strength Plan</strong>
+                    </div>
+                    <div>
+                      <span>Risk Rule</span>
+                      <strong>Red below 3 days, yellow below 7 days</strong>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="profile-panel alerts-control-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Alerts</span>
+                      <h2>Action Queue</h2>
+                    </div>
+                    <strong>3 open</strong>
+                  </div>
+                  <div class="profile-alert-list">
+                    <div class="profile-alert due">
+                      <span></span>
+                      <div>
+                        <strong>Payment due</strong>
+                        <p>₹4,500 pending for PT package extension.</p>
+                      </div>
+                      <button type="button">Collect</button>
+                    </div>
+                    <div class="profile-alert warning">
+                      <span></span>
+                      <div>
+                        <strong>Low attendance risk</strong>
+                        <p>2 missed morning sessions in the last 10 days.</p>
+                      </div>
+                      <button type="button">Message</button>
+                    </div>
+                    <div class="profile-alert expiring">
+                      <span></span>
+                      <div>
+                        <strong>Plan expiring</strong>
+                        <p>Renewal conversation should start before 23 May.</p>
+                      </div>
+                      <button type="button">Renew</button>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="profile-panel suggestions-panel">
+                  <div class="profile-panel-head">
+                    <div>
+                      <span>Smart Suggestions</span>
+                      <h2>Next Best Moves</h2>
+                    </div>
+                  </div>
+                  <div class="suggestion-list">
+                    <button type="button">
+                      <span>Offer PT plan</span>
+                      <strong>Good conversion signal</strong>
+                    </button>
+                    <button type="button">
+                      <span>Send renewal reminder</span>
+                      <strong data-profile-field="renewalSuggestion">28 days remaining</strong>
+                    </button>
+                  </div>
+                </article>
+              </aside>
+            </section>
+
+            <section class="profile-deep-data" aria-label="Detailed member data">
+              <div class="profile-tabs" role="tablist" aria-label="Member records">
+                <button class="is-active" type="button" role="tab" aria-selected="true" aria-controls="profile-tab-payments" id="profile-tab-button-payments" data-profile-tab="payments">
+                  Payments History
+                </button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-attendance" id="profile-tab-button-attendance" data-profile-tab="attendance">
+                  Attendance History
+                </button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-progress" id="profile-tab-button-progress" data-profile-tab="progress">
+                  Progress Tracking
+                </button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-documents" id="profile-tab-button-documents" data-profile-tab="documents">
+                  Documents
+                </button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-notes" id="profile-tab-button-notes" data-profile-tab="notes">
+                  Trainer Notes
+                </button>
+              </div>
+
+              <div class="profile-tab-panel is-active" role="tabpanel" tabindex="0" id="profile-tab-payments" aria-labelledby="profile-tab-button-payments" data-profile-panel="payments">
+                <div class="profile-table-wrap">
+                  <table class="profile-record-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Receipt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>15 Apr 2026</td>
+                        <td>₹12,500</td>
+                        <td>UPI</td>
+                        <td><mark class="status active">Paid</mark></td>
+                        <td><button class="table-download-btn" type="button">Download</button></td>
+                      </tr>
+                      <tr>
+                        <td>2 Mar 2026</td>
+                        <td>₹30,000</td>
+                        <td>Card</td>
+                        <td><mark class="status active">Paid</mark></td>
+                        <td><button class="table-download-btn" type="button">Download</button></td>
+                      </tr>
+                      <tr>
+                        <td>1 May 2026</td>
+                        <td>₹4,500</td>
+                        <td>Pending</td>
+                        <td><mark class="status pending">Due</mark></td>
+                        <td><button class="table-download-btn muted" type="button">Generate</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-attendance" aria-labelledby="profile-tab-button-attendance" data-profile-panel="attendance" hidden>
+                <div class="attendance-log-grid">
+                  <div class="attendance-log-item active">
+                    <span>2 May</span>
+                    <strong>6:25 AM</strong>
+                    <small>Strength floor</small>
+                  </div>
+                  <div class="attendance-log-item active">
+                    <span>1 May</span>
+                    <strong>7:10 AM</strong>
+                    <small>PT session</small>
+                  </div>
+                  <div class="attendance-log-item missed">
+                    <span>30 Apr</span>
+                    <strong>No visit</strong>
+                    <small>Rest day</small>
+                  </div>
+                  <div class="attendance-log-item active">
+                    <span>29 Apr</span>
+                    <strong>6:45 AM</strong>
+                    <small>Conditioning</small>
+                  </div>
+                  <div class="attendance-log-item active">
+                    <span>28 Apr</span>
+                    <strong>7:02 AM</strong>
+                    <small>Strength floor</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-progress" aria-labelledby="profile-tab-button-progress" data-profile-panel="progress" hidden>
+                <div class="progress-tracking-grid">
+                  <div class="progress-metric">
+                    <span>Weight</span>
+                    <strong>84 kg to 81 kg</strong>
+                    <i style="width: 62%"></i>
+                  </div>
+                  <div class="progress-metric">
+                    <span>Waist</span>
+                    <strong>36 in to 34.5 in</strong>
+                    <i style="width: 54%"></i>
+                  </div>
+                  <div class="progress-metric">
+                    <span>Goal Progress</span>
+                    <strong>64%</strong>
+                    <i style="width: 64%"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-documents" aria-labelledby="profile-tab-button-documents" data-profile-panel="documents" hidden>
+                <div class="document-record-grid">
+                  <div>
+                    <span>Aadhaar / ID Proof</span>
+                    <strong>Verified 3 Mar 2026</strong>
+                    <button type="button">View</button>
+                  </div>
+                  <div>
+                    <span>Membership Agreement</span>
+                    <strong>Signed 2 Mar 2026</strong>
+                    <button type="button">Download</button>
+                  </div>
+                  <div>
+                    <span>Medical Declaration</span>
+                    <strong>Updated 28 Apr 2026</strong>
+                    <button type="button">View</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-notes" aria-labelledby="profile-tab-button-notes" data-profile-panel="notes" hidden>
+                <div class="trainer-notes-list">
+                  <article>
+                    <span>2 May 2026</span>
+                    <strong>Increase deadlift load gradually. No lower-back discomfort reported.</strong>
+                  </article>
+                  <article>
+                    <span>29 Apr 2026</span>
+                    <strong>Good adherence. Add mobility block after leg day.</strong>
+                  </article>
+                  <article>
+                    <span>Restrictions</span>
+                    <strong>Avoid high-volume jumping drills until knee stability check is complete.</strong>
+                  </article>
+                </div>
+              </div>
+            </section>
+                </section>
+              </div>
+            </section>
+          </div>
+        </section>
         <section class="coming-soon-stage" data-stage="coming-soon" aria-live="polite" aria-hidden="true">
           <div class="coming-soon-shell">
             <div class="coming-soon-copy">
-              <p class="coming-soon-kicker">GymDeck Workspace</p>
+              <p class="coming-soon-kicker"><span class="font-ethnocentric text-[0.85em] tracking-normal">GymDeck</span> Workspace</p>
               <h1 class="coming-soon-title">Coming Soon</h1>
               <p class="coming-soon-text">
                 <span class="coming-soon-feature">Members</span>

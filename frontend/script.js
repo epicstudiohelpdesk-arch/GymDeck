@@ -1,19 +1,59 @@
+import { mountMemberProfilesDashboard } from "./memberProfilesDashboard.jsx";
+import { mountWelcomeOverlay } from "./WelcomeOverlay.jsx";
+
+// Post-Login Welcome Sequence
+const initWelcome = () => {
+  const enterMode = sessionStorage.getItem("gymdeck-enter");
+
+  if (enterMode === "dashboard") {
+    sessionStorage.removeItem("gymdeck-enter");
+    
+    const shell = document.querySelector(".page-shell");
+    if (shell) shell.classList.add("is-loading");
+
+    // Safety fallback: reveal dashboard after 3.5s if overlay fails
+    const safetyTimeout = setTimeout(() => {
+      if (shell && shell.classList.contains("is-loading")) {
+        shell.classList.remove("is-loading");
+        document.documentElement.classList.add("dashboard-enter-active");
+      }
+    }, 3500);
+
+    mountWelcomeOverlay("Admin", () => {
+      clearTimeout(safetyTimeout);
+      if (shell) {
+        shell.classList.remove("is-loading");
+        document.documentElement.classList.add("dashboard-enter-active");
+      }
+    });
+  } else if (document.documentElement.classList.contains("dashboard-enter")) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.documentElement.classList.add("dashboard-enter-active");
+      });
+    });
+  }
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initWelcome);
+} else {
+  initWelcome();
+}
+
 document.querySelectorAll(".icon-btn, .join-btn, .dots, .slider-nav button, .follow-btn, .see-all-btn, .plus-btn, .launch-btn").forEach((button) => {
   button.addEventListener("click", (event) => {
     event.preventDefault();
   });
 });
 
-if (document.documentElement.classList.contains("dashboard-enter")) {
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      document.documentElement.classList.add("dashboard-enter-active");
-    });
-  });
-}
-
 const menuToggle = document.querySelector(".menu-toggle");
 const sidebarOverlay = document.querySelector(".sidebar-overlay");
+const sidebar = document.querySelector(".sidebar");
+const pageShell = document.querySelector(".page-shell");
+const sidebarMenuScroll = document.querySelector(".sidebar-menu-scroll");
+const sidebarScrollIndicator = document.querySelector("[data-sidebar-scroll-indicator]");
+const sidebarScrollThumb = document.querySelector("[data-sidebar-scroll-thumb]");
 const mobileNavBreakpoint = window.matchMedia("(max-width: 1024px)");
 const logoutTrigger = document.querySelector(".logout");
 const logoutDialog = document.querySelector(".logout-dialog");
@@ -31,7 +71,7 @@ const documentFigure = document.querySelector("[data-document-figure]");
 const documentImage = document.querySelector("[data-document-image]");
 const addMemberModal = document.querySelector(".member-form-modal");
 const addMemberBackdrop = document.querySelector(".member-form-backdrop");
-const addMemberOpenButton = document.querySelector("[data-add-member-open]");
+const addMemberOpenButtons = Array.from(document.querySelectorAll("[data-add-member-open]"));
 const addMemberCloseButtons = Array.from(document.querySelectorAll("[data-add-member-close]"));
 const addMemberForm = document.querySelector(".member-form-grid");
 const addMemberSaveButton = document.querySelector("[data-member-save]");
@@ -52,34 +92,92 @@ const addMemberDatePickerClear = document.querySelector("[data-date-picker-clear
 const addMemberUploadInputs = Array.from(document.querySelectorAll("[data-member-upload-input]"));
 const addMemberUploadTriggers = Array.from(document.querySelectorAll("[data-member-upload-trigger]"));
 const addMemberUploadRemoveButtons = Array.from(document.querySelectorAll("[data-member-upload-remove]"));
-const logoutDestination = "../authentication/index.html";
-const overviewLinks = Array.from(document.querySelectorAll(".sidebar-group-overview .nav-item[data-view]"));
+const logoutDestination = "../index.html";
+const authStorageKey = "gymdeck-authenticated";
+const overviewLinks = Array.from(document.querySelectorAll(".sidebar [data-view]"));
+const navDropdowns = Array.from(document.querySelectorAll("[data-nav-dropdown]"));
+const navDropdownToggles = Array.from(document.querySelectorAll("[data-nav-dropdown-toggle]"));
 const dashboardStage = document.querySelector('[data-stage="dashboard"]');
 const membersStage = document.querySelector('[data-stage="members"]');
+const memberProfileStage = document.querySelector('[data-stage="member-profile"]');
 const comingSoonStage = document.querySelector('[data-stage="coming-soon"]');
 const comingSoonFeature = document.querySelector(".coming-soon-feature");
 const comingSoonButtons = Array.from(document.querySelectorAll("[data-view-target]"));
 const memberSearchInput = document.querySelector("[data-member-search]");
 const memberCount = document.querySelector("[data-member-count]");
+const memberFilterButtons = Array.from(document.querySelectorAll("[data-member-filter]"));
+const membersRefreshButton = document.querySelector(".members-icon-btn");
 const membersEmptyState = document.querySelector("[data-members-empty]");
 const membersTableBody = document.querySelector(".members-table tbody");
+const profileTabButtons = Array.from(document.querySelectorAll("[data-profile-tab]"));
+const profileTabPanels = Array.from(document.querySelectorAll("[data-profile-panel]"));
+const memberProfileCards = Array.from(document.querySelectorAll("[data-profile-card]"));
+const memberProfileDetailsPanel = document.querySelector("[data-profile-details-panel]");
+const memberProfileFieldNodes = Array.from(document.querySelectorAll("[data-profile-field]"));
+const memberProfileStatusBadge = document.querySelector("[data-profile-status-badge]");
+const memberProfileAttendanceBadge = document.querySelector("[data-profile-attendance-badge]");
+const memberProfilePaymentBadge = document.querySelector("[data-profile-payment-badge]");
+const memberProfileStatusPanel = document.querySelector("[data-profile-status-panel]");
+const memberProfileExpiryMeter = document.querySelector("[data-profile-expiry-meter]");
+const memberProfileExpiryBar = document.querySelector("[data-profile-expiry-bar]");
+const memberProfileCallLink = document.querySelector("[data-profile-call]");
+const memberProfileWhatsappLink = document.querySelector("[data-profile-whatsapp]");
 const viewLabels = {
   dashboard: "Dashboard",
-  members: "Members",
-  attendance: "Attendance",
-  payments: "Payments",
-  trainers: "Trainers",
-  "personal-training": "Personal Training",
-  "notify-members": "Notify Members"
+  members: "All Members",
+  "add-new-member": "Add New Member",
+  "member-profiles": "Member Profiles",
+  "past-members": "Past Members",
+  "membership-plans": "Membership Plans",
+  "expiring-memberships": "Expiring Memberships",
+  "freeze-pause": "Freeze / Pause",
+  attendance: "Daily Check-in",
+  "manual-entry": "Manual Entry",
+  "attendance-reports": "Attendance Reports",
+  payments: "Collect Fees",
+  "pending-dues": "Pending Dues",
+  "payment-history": "Payment History",
+  "generate-receipt": "Generate Receipt",
+  "renew-membership": "Renew Membership",
+  trainers: "All Trainers",
+  "assign-trainer": "Assign Trainer",
+  "trainer-schedule": "Trainer Schedule",
+  "staff-roles": "Staff Roles",
+  "personal-training": "PT Clients",
+  "pt-packages": "PT Packages",
+  "session-tracking": "Session Tracking",
+  "trainer-earnings": "Trainer Earnings",
+  "notify-members": "Send Notification",
+  "whatsapp-alerts": "WhatsApp Alerts",
+  "renewal-reminders": "Renewal Reminders",
+  announcements: "Announcements",
+  "revenue-reports": "Revenue Report",
+  "attendance-analytics": "Attendance Trends",
+  "member-growth": "Membership Growth",
+  "trainer-performance": "Trainer Performance",
+  documents: "Member Documents",
+  "id-proofs": "ID Proofs",
+  agreements: "Agreements",
+  settings: "Settings",
+  "gym-profile": "Gym Profile",
+  "membership-pricing": "Membership Pricing",
+  "app-settings": "App Settings",
+  "backup-restore": "Backup & Restore",
+  "sync-status": "Device Sync (QR)",
+  account: "Profile"
 };
 const previewOrder = Object.keys(viewLabels).filter((view) => view !== "dashboard");
+const MEMBER_DELETED_STORAGE_KEY = "gymdeck-deleted-member-ids";
 let lastFocusedElement = null;
 let activeView = "dashboard";
+let activeMemberFilter = "all";
 let lastDocumentTrigger = null;
 let lastAddMemberTrigger = null;
 let activeCalendarDate = new Date();
 let datePickerMode = "day";
 const uploadPreviewUrls = new WeakMap();
+let sidebarScrollFrame = null;
+let sidebarScrollIdleTimeout = null;
 
 const getMemberFormFields = () =>
   addMemberForm
@@ -92,6 +190,67 @@ const setMenuState = (isOpen) => {
   if (menuToggle) {
     menuToggle.setAttribute("aria-expanded", String(isOpen));
   }
+};
+
+const syncSidebarScrollIndicator = () => {
+  sidebarScrollFrame = null;
+
+  if (!sidebar || !sidebarMenuScroll || !sidebarScrollIndicator || !sidebarScrollThumb) {
+    return;
+  }
+
+  const maxScroll = sidebarMenuScroll.scrollHeight - sidebarMenuScroll.clientHeight;
+  const canScroll = maxScroll > 1;
+
+  sidebar.classList.toggle("has-menu-scroll", canScroll);
+
+  if (!canScroll) {
+    sidebarScrollThumb.style.setProperty("--sidebar-scroll-thumb-y", "0px");
+    return;
+  }
+
+  const trackHeight = sidebarScrollIndicator.clientHeight;
+  const thumbHeight = sidebarScrollThumb.offsetHeight;
+  const maxThumbOffset = Math.max(trackHeight - thumbHeight, 0);
+  const scrollProgress = sidebarMenuScroll.scrollTop / maxScroll;
+  const thumbOffset = Math.round(scrollProgress * maxThumbOffset);
+
+  sidebarScrollThumb.style.setProperty("--sidebar-scroll-thumb-y", `${thumbOffset}px`);
+};
+
+const scheduleSidebarScrollIndicatorSync = () => {
+  if (sidebarScrollFrame !== null) {
+    return;
+  }
+
+  sidebarScrollFrame = requestAnimationFrame(syncSidebarScrollIndicator);
+};
+
+const revealSidebarScrollIndicator = () => {
+  if (!sidebar) {
+    return;
+  }
+
+  sidebar.classList.add("is-menu-scrolling");
+  window.clearTimeout(sidebarScrollIdleTimeout);
+  sidebarScrollIdleTimeout = window.setTimeout(() => {
+    sidebar.classList.remove("is-menu-scrolling");
+  }, 650);
+};
+
+const refreshSidebarScrollIndicator = () => {
+  scheduleSidebarScrollIndicatorSync();
+  window.setTimeout(scheduleSidebarScrollIndicatorSync, 260);
+};
+
+const refreshSidebarRailAfterTransition = () => {
+  refreshSidebarScrollIndicator();
+  window.setTimeout(refreshSidebarScrollIndicator, 560);
+};
+
+const setSidebarRailExpanded = (isExpanded) => {
+  pageShell?.classList.toggle("is-sidebar-expanded", isExpanded);
+  refreshSidebarRailAfterTransition();
 };
 
 const setLogoutDialogState = (isOpen) => {
@@ -350,6 +509,12 @@ const getMemberRows = () => Array.from(document.querySelectorAll("[data-member-c
 
 const getMemberDobCells = () => Array.from(document.querySelectorAll("[data-member-dob]"));
 
+const getMemberDisplayName = (row) =>
+  row?.dataset.memberName ||
+  row?.querySelector(".member-name-cell strong")?.textContent?.trim() ||
+  row?.children[1]?.textContent?.trim() ||
+  "Member Record";
+
 const getMemberField = (label) =>
   addMemberForm?.querySelector(`.member-field[data-field-label="${label}"]`);
 
@@ -394,7 +559,7 @@ const bindMemberRowInteractions = (row) => {
   const documentButton = row.querySelector(".doc-view-btn");
 
   photoButton?.addEventListener("click", () => {
-    const memberName = row.children[1]?.textContent?.trim() || "Member Record";
+    const memberName = getMemberDisplayName(row);
     const memberImage = photoButton.querySelector("img");
 
     setDocumentModalContent({
@@ -409,7 +574,7 @@ const bindMemberRowInteractions = (row) => {
 
   documentButton?.addEventListener("click", (event) => {
     event.preventDefault();
-    const memberName = row.children[1]?.textContent?.trim() || "Member Record";
+    const memberName = getMemberDisplayName(row);
     const documentLabel = documentButton.previousElementSibling?.textContent?.trim() || "Residence Proof";
 
     setDocumentModalContent({
@@ -424,25 +589,43 @@ const bindMemberRowInteractions = (row) => {
 const createMemberRow = (member) => {
   const row = document.createElement("tr");
   row.setAttribute("data-member-card", "");
+  row.dataset.memberName = member.name;
+  row.dataset.memberStatus = "verified";
+  row.dataset.memberRecent = "true";
   row.dataset.search = createMemberSearchIndex(member);
   row.innerHTML = `
-    <td>
+    <td data-label="Member">
       <button class="member-photo-btn" type="button" data-photo-view aria-label="View ${escapeHtml(member.name)} photo">
         <img class="member-photo" src="${escapeHtml(member.photoUrl)}" alt="${escapeHtml(member.name)}" />
       </button>
+      <div class="member-name-cell">
+        <strong>${escapeHtml(member.name)}</strong>
+        <span>New registration</span>
+      </div>
     </td>
-    <td>${escapeHtml(member.name)}</td>
-    <td>${escapeHtml(member.contactNumber)}</td>
-    <td>${escapeHtml(member.alternateContact)}</td>
-    <td>${escapeHtml(member.email || "Not provided")}</td>
-    <td data-member-dob="${escapeHtml(member.dobValue)}">${escapeHtml(member.dobDisplay)}</td>
-    <td data-member-age></td>
-    <td data-member-joined-date="${escapeHtml(member.joiningDateValue)}">${escapeHtml(member.joiningDateDisplay)}</td>
-    <td data-member-joined-time="${escapeHtml(member.joiningTimeValue)}">${escapeHtml(member.joiningTimeDisplay)}</td>
-    <td>${escapeHtml(member.height || "-")}</td>
-    <td>${escapeHtml(member.weight || "-")}</td>
-    <td>${escapeHtml(member.address)}</td>
-    <td>
+    <td data-label="Contact">
+      <div class="member-stack">
+        <span><b>Primary</b> ${escapeHtml(member.contactNumber)}</span>
+        <span><b>Alternate</b> ${escapeHtml(member.alternateContact)}</span>
+        <span><b>Email</b> ${escapeHtml(member.email || "Not provided")}</span>
+      </div>
+    </td>
+    <td data-label="Personal">
+      <div class="member-metrics">
+        <span data-member-dob="${escapeHtml(member.dobValue)}"><b>DOB</b> ${escapeHtml(member.dobDisplay)}</span>
+        <span data-member-age><b>Age</b></span>
+        <span><b>Height</b> ${escapeHtml(member.height || "-")}</span>
+        <span><b>Weight</b> ${escapeHtml(member.weight || "-")}</span>
+      </div>
+    </td>
+    <td data-label="Joined">
+      <div class="member-metrics">
+        <span data-member-joined-date="${escapeHtml(member.joiningDateValue)}"><b>Date</b> ${escapeHtml(member.joiningDateDisplay)}</span>
+        <span data-member-joined-time="${escapeHtml(member.joiningTimeValue)}"><b>Time</b> ${escapeHtml(member.joiningTimeDisplay)}</span>
+      </div>
+    </td>
+    <td data-label="Address">${escapeHtml(member.address)}</td>
+    <td data-label="Documents">
       <div class="doc-cell">
         <span>${escapeHtml(member.docsLabel)}</span>
         <button class="doc-view-btn" type="button">View Document</button>
@@ -662,7 +845,9 @@ const setDocumentModalContent = ({ memberName, title, imageSrc = "", imageAlt = 
 };
 
 const performLogout = () => {
-  sessionStorage.setItem("gymdeck-enter", "auth");
+  sessionStorage.removeItem(authStorageKey);
+  localStorage.removeItem(authStorageKey);
+  sessionStorage.setItem("gymdeck-enter", "logout");
   document.body.classList.remove("logout-dialog-open");
   document.body.classList.add("is-logging-out");
 
@@ -682,10 +867,12 @@ const performLogout = () => {
 const setStageVisibility = (activeStage) => {
   dashboardStage?.classList.toggle("is-hidden", activeStage !== "dashboard");
   membersStage?.classList.toggle("is-active", activeStage === "members");
+  memberProfileStage?.classList.toggle("is-active", activeStage === "member-profile");
   comingSoonStage?.classList.toggle("is-active", activeStage === "coming-soon");
 
   dashboardStage?.setAttribute("aria-hidden", String(activeStage !== "dashboard"));
   membersStage?.setAttribute("aria-hidden", String(activeStage !== "members"));
+  memberProfileStage?.setAttribute("aria-hidden", String(activeStage !== "member-profile"));
   comingSoonStage?.setAttribute("aria-hidden", String(activeStage !== "coming-soon"));
 };
 
@@ -720,8 +907,23 @@ const updateMemberAges = () => {
       return;
     }
 
-    ageCell.textContent = calculateAge(dobCell.dataset.memberDob);
+    const age = calculateAge(dobCell.dataset.memberDob);
+    const label = document.createElement("b");
+    label.textContent = "Age";
+    ageCell.replaceChildren(label, document.createTextNode(age ? ` ${age}` : ""));
   });
+};
+
+const matchesMemberFilter = (card) => {
+  if (activeMemberFilter === "verified") {
+    return card.dataset.memberStatus === "verified";
+  }
+
+  if (activeMemberFilter === "recent") {
+    return card.dataset.memberRecent === "true";
+  }
+
+  return true;
 };
 
 const updateMemberResults = () => {
@@ -736,7 +938,7 @@ const updateMemberResults = () => {
 
   memberCards.forEach((card) => {
     const searchableContent = card.dataset.search || "";
-    const matches = !query || searchableContent.includes(query);
+    const matches = (!query || searchableContent.includes(query)) && matchesMemberFilter(card);
     card.hidden = !matches;
 
     if (matches) {
@@ -768,6 +970,14 @@ const setActiveView = (viewName) => {
     }
   });
 
+  navDropdowns.forEach((dropdown) => {
+    const toggle = dropdown.querySelector("[data-nav-dropdown-toggle]");
+    const hasActiveView = Boolean(dropdown.querySelector(`[data-view="${safeView}"]`));
+
+    dropdown.classList.toggle("has-active-view", hasActiveView);
+    toggle?.classList.toggle("active", hasActiveView);
+  });
+
   if (comingSoonFeature) {
     comingSoonFeature.textContent = viewLabels[safeView] || "Workspace";
   }
@@ -777,22 +987,114 @@ const setActiveView = (viewName) => {
   } else if (safeView === "members") {
     setStageVisibility("members");
     updateMemberResults();
+  } else if (safeView === "member-profiles" || safeView === "past-members") {
+    setStageVisibility("member-profile");
+    window.dispatchEvent(new CustomEvent("memberProfilesRoute", { detail: { screen: safeView } }));
   } else {
     setStageVisibility("coming-soon");
   }
 
-  if (window.matchMedia("(max-width: 1180px)").matches) {
+  const isCompactNavigation = window.matchMedia("(max-width: 1180px)").matches;
+
+  if (isCompactNavigation) {
     setMenuState(false);
   }
+
+  navDropdowns.forEach((dropdown) => {
+    const toggle = dropdown.querySelector("[data-nav-dropdown-toggle]");
+    const shouldStayOpen = !isCompactNavigation && dropdown.classList.contains("has-active-view");
+
+    dropdown.classList.toggle("is-open", shouldStayOpen);
+    toggle?.setAttribute("aria-expanded", String(shouldStayOpen));
+  });
+
+  refreshSidebarScrollIndicator();
 };
+
+const getDeletedMemberIds = () => {
+  try {
+    const serialized = window.localStorage.getItem(MEMBER_DELETED_STORAGE_KEY);
+    return serialized ? new Set(JSON.parse(serialized)) : new Set();
+  } catch {
+    return new Set();
+  }
+};
+
+const hideDeletedMembersInAllViews = () => {
+  const deletedIds = getDeletedMemberIds();
+  const memberCards = Array.from(document.querySelectorAll("[data-member-card][data-member-id]"));
+
+  memberCards.forEach((card) => {
+    const memberId = card.dataset.memberId;
+    card.hidden = memberId ? deletedIds.has(memberId) : card.hidden;
+  });
+
+  updateMemberResults();
+};
+
+window.addEventListener("gymdeck-member-deleted", hideDeletedMembersInAllViews);
 
 menuToggle?.addEventListener("click", () => {
   const isOpen = document.body.classList.contains("sidebar-open");
   setMenuState(!isOpen);
+  refreshSidebarScrollIndicator();
 });
 
 sidebarOverlay?.addEventListener("click", () => {
   setMenuState(false);
+  refreshSidebarScrollIndicator();
+});
+
+sidebarMenuScroll?.addEventListener("scroll", () => {
+  revealSidebarScrollIndicator();
+  scheduleSidebarScrollIndicatorSync();
+}, { passive: true });
+window.addEventListener("resize", refreshSidebarScrollIndicator);
+
+sidebar?.addEventListener("mouseenter", () => {
+  setSidebarRailExpanded(true);
+});
+
+sidebar?.addEventListener("mouseleave", () => {
+  if (!sidebar.matches(":focus-within")) {
+    setSidebarRailExpanded(false);
+  }
+});
+
+sidebar?.addEventListener("focusin", () => {
+  setSidebarRailExpanded(true);
+});
+
+sidebar?.addEventListener("focusout", (event) => {
+  if (!sidebar.contains(event.relatedTarget)) {
+    setSidebarRailExpanded(sidebar.matches(":hover"));
+  }
+});
+
+if (window.ResizeObserver && sidebarMenuScroll && sidebarScrollIndicator) {
+  const sidebarScrollObserver = new ResizeObserver(refreshSidebarScrollIndicator);
+  sidebarScrollObserver.observe(sidebarMenuScroll);
+  sidebarScrollObserver.observe(sidebarScrollIndicator);
+}
+
+navDropdownToggles.forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    const dropdown = toggle.closest("[data-nav-dropdown]");
+    const isOpen = !dropdown?.classList.contains("is-open");
+
+    navDropdowns.forEach((currentDropdown) => {
+      if (currentDropdown === dropdown) {
+        return;
+      }
+
+      currentDropdown.classList.remove("is-open");
+      currentDropdown.querySelector("[data-nav-dropdown-toggle]")?.setAttribute("aria-expanded", "false");
+    });
+
+    dropdown?.classList.toggle("is-open", isOpen);
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    refreshSidebarScrollIndicator();
+  });
 });
 
 logoutTrigger?.addEventListener("click", (event) => {
@@ -817,7 +1119,7 @@ documentViewButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
     event.preventDefault();
     const row = button.closest("tr");
-    const memberName = row?.children[1]?.textContent?.trim() || "Member Record";
+    const memberName = getMemberDisplayName(row);
     const documentLabel = button.previousElementSibling?.textContent?.trim() || "Residence Proof";
 
     setDocumentModalContent({
@@ -832,7 +1134,7 @@ documentViewButtons.forEach((button) => {
 photoViewButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const row = button.closest("tr");
-    const memberName = row?.children[1]?.textContent?.trim() || "Member Record";
+    const memberName = getMemberDisplayName(row);
     const memberImage = button.querySelector("img");
 
     setDocumentModalContent({
@@ -856,9 +1158,13 @@ documentCloseButtons.forEach((button) => {
   });
 });
 
-addMemberOpenButton?.addEventListener("click", () => {
-  clearMemberFormErrors();
-  setAddMemberModalState(true, addMemberOpenButton);
+addMemberOpenButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    setActiveView("members");
+    clearMemberFormErrors();
+    setAddMemberModalState(true, button);
+  });
 });
 
 addMemberBackdrop?.addEventListener("click", () => {
@@ -1040,6 +1346,197 @@ memberSearchInput?.addEventListener("input", debounce(() => {
   updateMemberResults();
 }, 150));
 
+memberFilterButtons.forEach((button) => {
+  const isInitiallyActive = button.dataset.memberFilter === activeMemberFilter;
+  button.setAttribute("aria-pressed", String(isInitiallyActive));
+
+  button.addEventListener("click", () => {
+    activeMemberFilter = button.dataset.memberFilter || "all";
+
+    memberFilterButtons.forEach((filterButton) => {
+      const isActive = filterButton === button;
+      filterButton.classList.toggle("is-active", isActive);
+      filterButton.setAttribute("aria-pressed", String(isActive));
+    });
+
+    updateMemberResults();
+  });
+});
+
+membersRefreshButton?.addEventListener("click", () => {
+  if (memberSearchInput) {
+    memberSearchInput.value = "";
+  }
+
+  activeMemberFilter = "all";
+  memberFilterButtons.forEach((button) => {
+    const isActive = button.dataset.memberFilter === "all";
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+  updateMemberResults();
+});
+
+const formatPhoneHref = (phone = "") => phone.replace(/[^\d+]/g, "");
+
+const resetProfileTabs = () => {
+  profileTabButtons.forEach((tabButton) => {
+    const isActive = tabButton.dataset.profileTab === "payments";
+    tabButton.classList.toggle("is-active", isActive);
+    tabButton.setAttribute("aria-selected", String(isActive));
+  });
+
+  profileTabPanels.forEach((panel) => {
+    const isActive = panel.dataset.profilePanel === "payments";
+    panel.classList.toggle("is-active", isActive);
+    panel.hidden = !isActive;
+  });
+};
+
+const setProfileBadgeClass = (element, baseClass, stateClass) => {
+  if (!element) {
+    return;
+  }
+
+  element.className = `${baseClass} ${stateClass || ""}`.trim();
+};
+
+const updateMemberProfileDetails = (record) => {
+  if (!record || !memberProfileDetailsPanel) {
+    return;
+  }
+
+  const data = record.dataset;
+  const values = {
+    initials: data.initials,
+    name: data.name,
+    statusLabel: data.statusLabel,
+    plan: data.plan,
+    memberId: data.memberId,
+    joinDate: data.joinDate,
+    trainer: data.trainer,
+    riskScore: data.riskScore,
+    riskNote: data.riskNote,
+    identityBadge: data.statusLabel === "Expired" ? "Review" : "Verified",
+    age: data.age,
+    gender: data.gender,
+    height: data.height,
+    weight: data.weight,
+    goal: data.goal,
+    phone: data.phone,
+    whatsapp: data.whatsapp,
+    alternate: data.alternate,
+    email: data.email,
+    address: data.address,
+    checkins: data.checkins,
+    lastVisit: data.lastVisit,
+    visitNote: data.visitNote,
+    trainerName: data.trainer,
+    planBadge: data.statusLabel === "Paused" ? "Freeze Active" : data.planType,
+    planType: data.planType,
+    duration: data.duration,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    nextReview: data.nextReview,
+    totalPaid: data.totalPaid,
+    pending: data.pending,
+    lastPayment: data.lastPayment,
+    paymentMethod: data.paymentMethod,
+    invoiceOwner: data.invoiceOwner,
+    daysLeft: data.daysLeft,
+    expiryDate: data.expiryDate,
+    statusPlan: data.plan,
+    renewalSuggestion: data.daysLeft === "Expired" ? "Renewal overdue" : data.daysLeft
+  };
+
+  memberProfileFieldNodes.forEach((node) => {
+    const value = values[node.dataset.profileField];
+
+    if (value !== undefined) {
+      node.textContent = value;
+    }
+  });
+
+  setProfileBadgeClass(memberProfileStatusBadge, "member-status-badge", data.statusClass);
+  setProfileBadgeClass(memberProfileAttendanceBadge, "", data.attendanceBadgeClass);
+  setProfileBadgeClass(memberProfilePaymentBadge, "", data.paymentBadgeClass);
+  setProfileBadgeClass(memberProfileStatusPanel, "profile-panel status-panel", data.detailPanelClass);
+  setProfileBadgeClass(memberProfileExpiryMeter, "expiry-meter", data.expiryClass);
+
+  if (memberProfileAttendanceBadge) {
+    memberProfileAttendanceBadge.textContent = data.attendanceBadge || "Healthy";
+  }
+
+  if (memberProfilePaymentBadge) {
+    memberProfilePaymentBadge.textContent = data.paymentBadge || "Clear";
+  }
+
+  if (memberProfileExpiryBar) {
+    memberProfileExpiryBar.style.width = data.expiryWidth || "60%";
+  }
+
+  if (memberProfileCallLink) {
+    memberProfileCallLink.href = `tel:${formatPhoneHref(data.phone)}`;
+  }
+
+  if (memberProfileWhatsappLink) {
+    memberProfileWhatsappLink.href = `https://wa.me/${formatPhoneHref(data.whatsapp).replace("+", "")}`;
+  }
+};
+
+const collapseMemberProfileDetails = () => {
+  memberProfileCards.forEach((card) => {
+    card.setAttribute("aria-expanded", "false");
+    card.closest("[data-profile-record]")?.classList.remove("is-expanded");
+  });
+
+  if (memberProfileDetailsPanel) {
+    memberProfileDetailsPanel.hidden = true;
+  }
+};
+
+memberProfileCards.forEach((card) => {
+  card.addEventListener("click", () => {
+    const record = card.closest("[data-profile-record]");
+    const isExpanded = card.getAttribute("aria-expanded") === "true";
+
+    if (!record || !memberProfileDetailsPanel) {
+      return;
+    }
+
+    if (isExpanded) {
+      collapseMemberProfileDetails();
+      return;
+    }
+
+    collapseMemberProfileDetails();
+    updateMemberProfileDetails(record);
+    record.insertAdjacentElement("afterend", memberProfileDetailsPanel);
+    memberProfileDetailsPanel.hidden = false;
+    record.classList.add("is-expanded");
+    card.setAttribute("aria-expanded", "true");
+    resetProfileTabs();
+  });
+});
+
+profileTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetTab = button.dataset.profileTab;
+
+    profileTabButtons.forEach((tabButton) => {
+      const isActive = tabButton === button;
+      tabButton.classList.toggle("is-active", isActive);
+      tabButton.setAttribute("aria-selected", String(isActive));
+    });
+
+    profileTabPanels.forEach((panel) => {
+      const isActive = panel.dataset.profilePanel === targetTab;
+      panel.classList.toggle("is-active", isActive);
+      panel.hidden = !isActive;
+    });
+  });
+});
+
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     if (!addMemberDatePickerPanel?.hidden) {
@@ -1082,7 +1579,10 @@ document.addEventListener("click", (event) => {
   }
 });
 
+mountMemberProfilesDashboard();
 setActiveView(activeView);
+hideDeletedMembersInAllViews();
+refreshSidebarScrollIndicator();
 updateMemberAges();
 updateMemberResults();
 syncDateDisplay();

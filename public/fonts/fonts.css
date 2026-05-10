@@ -34,3 +34,22 @@
   font-display: swap;
   src: url('/fonts/plus-jakarta-sans-800.woff2') format('woff2');
 }
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/fonts/Ethnocentric-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Glitz';
+  src: url('/fonts/glitz.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-ethnocentric {
+  font-family: 'Ethnocentric', sans-serif !important;
+  color: #000000 !important;
+}

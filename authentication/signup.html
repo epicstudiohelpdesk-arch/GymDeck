@@ -5,24 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GymDeck Sign Up</title>
     <script>
-      if (sessionStorage.getItem("gymdeck-enter") === "auth") {
+      const enterMode = sessionStorage.getItem("gymdeck-enter");
+      if (enterMode === "auth" || enterMode === "logout") {
         document.documentElement.classList.add("auth-enter");
       }
     </script>
     <link rel="preconnect" href="/" />
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="stylesheet" href="./styles.css" />
+    <script>
+      // Immediate boot sequence to prevent dark flash
+      (function() {
+        document.documentElement.style.backgroundColor = '#f8fafc';
+        document.documentElement.classList.add('app-loading');
+      })();
+    </script>
   </head>
   <body>
     <main class="auth-page auth-page-signup">
       <section class="auth-intro">
-        <a class="brand" href="../frontend/index.html">
+        <a class="brand" href="./index.html">
           <span class="brand-mark">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2.5c1.05 3.98 2.03 4.97 6 6-3.97 1.03-4.95 2.02-6 6-1.05-3.98-2.03-4.97-6-6 3.97-1.03 4.95-2.02 6-6Z" />
             </svg>
           </span>
-          <span>GymDeck Auth</span>
+          <span class="font-ethnocentric">GymDeck</span>
         </a>
 
         <div class="intro-copy">
@@ -134,6 +142,6 @@
       </section>
     </main>
 
-    <script src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>
