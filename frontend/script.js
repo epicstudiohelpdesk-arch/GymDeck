@@ -1,5 +1,96 @@
-import { mountMemberProfilesDashboard } from "./memberProfilesDashboard.jsx";
-import { mountWelcomeOverlay } from "./WelcomeOverlay.jsx";
+// Fix macOS NSSpellServer timeout spam by disabling spellcheck globally
+const disableSpellcheck = (el) => {
+  if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+    el.spellcheck = false;
+    el.autocomplete = "off";
+    el.autocorrect = "off";
+    el.autocapitalize = "off";
+  }
+};
+
+// Initial pass for existing elements
+document.querySelectorAll("input, textarea").forEach(disableSpellcheck);
+
+// Observer for dynamically mounted React components
+const spellcheckObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === 1) { // Element node
+        if (node.tagName === "INPUT" || node.tagName === "TEXTAREA") {
+          disableSpellcheck(node);
+        }
+        node.querySelectorAll("input, textarea").forEach(disableSpellcheck);
+      }
+    });
+  });
+});
+
+spellcheckObserver.observe(document.body, { childList: true, subtree: true });
+
+// Lazy loaded component mounting system with memory management
+let activeRoots = new Map();
+const mountStageLazy = async (stage) => {
+  // Use canonical keys for shared components to prevent redundant remounting
+  let canonicalKey = stage;
+  if (stage === "member-profiles" || stage === "past-members") {
+    canonicalKey = "member-profile-shared";
+  } else if (stage === "membership-plans" || stage === "membership-pricing") {
+    canonicalKey = "membership-plans-shared";
+  } else if (stage === "daily-checkin" || stage === "attendance") {
+    canonicalKey = "daily-checkin-shared";
+  }
+
+  if (activeRoots.has(canonicalKey)) return;
+  
+  let mountPromise;
+  if (stage === "member-profiles" || stage === "past-members") {
+    mountPromise = import("./memberProfilesDashboard.jsx").then(m => m.mountMemberProfilesDashboard(stage));
+  } else if (stage === "membership-plans" || stage === "membership-pricing") {
+    mountPromise = import("./MembershipPlans.jsx").then(m => m.mountMembershipPlans());
+  } else if (stage === "expiring-memberships") {
+    mountPromise = import("./ExpiringMemberships.jsx").then(m => m.mountExpiringMemberships());
+  } else if (stage === "freeze-pause") {
+    mountPromise = import("./FreezePause.jsx").then(m => m.mountFreezePause());
+  } else if (stage === "daily-checkin" || stage === "attendance") {
+    mountPromise = import("./DailyCheckin.jsx").then(m => m.mountDailyCheckin());
+  } else if (stage === "manual-entry") {
+    mountPromise = import("./ManualEntry.jsx").then(m => m.mountManualEntry());
+  } else if (stage === "attendance-reports") {
+    mountPromise = import("./AttendanceReports.jsx").then(m => m.mountAttendanceReports());
+  } else if (stage === "payments") {
+    mountPromise = import("./CollectFees.jsx").then(m => m.mountCollectFees());
+  }
+  
+  if (mountPromise) {
+    const root = await mountPromise;
+    if (root) activeRoots.set(canonicalKey, root);
+  }
+};
+
+const unmountInactiveStages = (currentStage) => {
+  // Determine the canonical key for the current stage
+  let currentCanonicalKey = currentStage;
+  if (currentStage === "member-profiles" || currentStage === "past-members") {
+    currentCanonicalKey = "member-profile-shared";
+  } else if (currentStage === "membership-plans" || currentStage === "membership-pricing") {
+    currentCanonicalKey = "membership-plans-shared";
+  } else if (currentStage === "daily-checkin" || currentStage === "attendance") {
+    currentCanonicalKey = "daily-checkin-shared";
+  }
+
+  // Keep dashboard and the current stage, unmount everything else to save RAM
+  for (const [stage, root] of activeRoots.entries()) {
+    if (stage !== currentCanonicalKey && stage !== "dashboard") {
+      try {
+        root.unmount();
+        activeRoots.delete(stage);
+        console.log(`GymDeck: Unmounted ${stage} to optimize memory`);
+      } catch (err) {
+        console.warn(`GymDeck: Failed to unmount ${stage}:`, err);
+      }
+    }
+  }
+};
 
 // Post-Login Welcome Sequence
 const initWelcome = () => {
@@ -19,17 +110,24 @@ const initWelcome = () => {
       }
     }, 3500);
 
-    mountWelcomeOverlay("Admin", () => {
-      clearTimeout(safetyTimeout);
-      if (shell) {
-        shell.classList.remove("is-loading");
-        document.documentElement.classList.add("dashboard-enter-active");
-      }
+    import("./WelcomeOverlay.jsx").then(({ mountWelcomeOverlay }) => {
+      mountWelcomeOverlay("Admin", () => {
+        clearTimeout(safetyTimeout);
+        if (shell) {
+          shell.classList.remove("is-loading");
+          document.documentElement.classList.add("dashboard-enter-active");
+          
+          // Initialize dashboard widgets after welcome overlay
+          import("./DashboardWidgets.jsx").then(m => m.mountDashboardWidgets());
+        }
+      });
     });
   } else if (document.documentElement.classList.contains("dashboard-enter")) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         document.documentElement.classList.add("dashboard-enter-active");
+        // Initialize dashboard widgets for direct entries
+        import("./DashboardWidgets.jsx").then(m => m.mountDashboardWidgets());
       });
     });
   }
@@ -109,19 +207,17 @@ const memberFilterButtons = Array.from(document.querySelectorAll("[data-member-f
 const membersRefreshButton = document.querySelector(".members-icon-btn");
 const membersEmptyState = document.querySelector("[data-members-empty]");
 const membersTableBody = document.querySelector(".members-table tbody");
-const profileTabButtons = Array.from(document.querySelectorAll("[data-profile-tab]"));
-const profileTabPanels = Array.from(document.querySelectorAll("[data-profile-panel]"));
-const memberProfileCards = Array.from(document.querySelectorAll("[data-profile-card]"));
-const memberProfileDetailsPanel = document.querySelector("[data-profile-details-panel]");
-const memberProfileFieldNodes = Array.from(document.querySelectorAll("[data-profile-field]"));
-const memberProfileStatusBadge = document.querySelector("[data-profile-status-badge]");
-const memberProfileAttendanceBadge = document.querySelector("[data-profile-attendance-badge]");
-const memberProfilePaymentBadge = document.querySelector("[data-profile-payment-badge]");
-const memberProfileStatusPanel = document.querySelector("[data-profile-status-panel]");
-const memberProfileExpiryMeter = document.querySelector("[data-profile-expiry-meter]");
-const memberProfileExpiryBar = document.querySelector("[data-profile-expiry-bar]");
-const memberProfileCallLink = document.querySelector("[data-profile-call]");
-const memberProfileWhatsappLink = document.querySelector("[data-profile-whatsapp]");
+
+// Create a DOM cache for frequently accessed dynamic stages
+const DOM = {
+  get membershipPlansStage() { return document.querySelector('[data-stage="membership-plans"]'); },
+  get expiringMembershipsStage() { return document.querySelector('[data-stage="expiring-memberships"]'); },
+  get freezePauseStage() { return document.querySelector('[data-stage="freeze-pause"]'); },
+  get dailyCheckinStage() { return document.querySelector('[data-stage="daily-checkin"]'); },
+  get manualEntryStage() { return document.querySelector('[data-stage="manual-entry"]'); },
+  get attendanceReportsStage() { return document.querySelector('[data-stage="attendance-reports"]'); },
+  get paymentsStage() { return document.querySelector('[data-stage="payments"]'); }
+};
 const viewLabels = {
   dashboard: "Dashboard",
   members: "All Members",
@@ -131,6 +227,7 @@ const viewLabels = {
   "membership-plans": "Membership Plans",
   "expiring-memberships": "Expiring Memberships",
   "freeze-pause": "Freeze / Pause",
+  "daily-checkin": "Daily Check-in",
   attendance: "Daily Check-in",
   "manual-entry": "Manual Entry",
   "attendance-reports": "Attendance Reports",
@@ -302,16 +399,27 @@ const setAddMemberModalState = (isOpen, triggerButton = null) => {
     lastAddMemberTrigger = triggerButton || document.activeElement;
     addMemberModal.hidden = false;
     addMemberBackdrop.hidden = false;
+    
+    // Force a reflow to ensure the transition triggers
+    addMemberModal.offsetHeight;
+    
     document.body.classList.add("member-form-open");
     addMemberModal.querySelector("input")?.focus();
     return;
   }
 
   document.body.classList.remove("member-form-open");
-  addMemberModal.hidden = true;
-  addMemberBackdrop.hidden = true;
-  closeDatePicker();
-  resetUploadFields();
+  
+  // Wait for transition to finish before hiding (matching the 0.6s in CSS)
+  setTimeout(() => {
+    if (!document.body.classList.contains("member-form-open")) {
+      addMemberModal.hidden = true;
+      addMemberBackdrop.hidden = true;
+      closeDatePicker();
+      resetUploadFields();
+    }
+  }, 600);
+  
   lastAddMemberTrigger?.focus?.();
 };
 
@@ -868,11 +976,27 @@ const setStageVisibility = (activeStage) => {
   dashboardStage?.classList.toggle("is-hidden", activeStage !== "dashboard");
   membersStage?.classList.toggle("is-active", activeStage === "members");
   memberProfileStage?.classList.toggle("is-active", activeStage === "member-profile");
+  
+  DOM.membershipPlansStage?.classList.toggle("is-active", activeStage === "membership-plans");
+  DOM.expiringMembershipsStage?.classList.toggle("is-active", activeStage === "expiring-memberships");
+  DOM.freezePauseStage?.classList.toggle("is-active", activeStage === "freeze-pause");
+  DOM.dailyCheckinStage?.classList.toggle("is-active", activeStage === "daily-checkin");
+  DOM.manualEntryStage?.classList.toggle("is-active", activeStage === "manual-entry");
+  DOM.attendanceReportsStage?.classList.toggle("is-active", activeStage === "attendance-reports");
+  DOM.paymentsStage?.classList.toggle("is-active", activeStage === "payments");
   comingSoonStage?.classList.toggle("is-active", activeStage === "coming-soon");
 
   dashboardStage?.setAttribute("aria-hidden", String(activeStage !== "dashboard"));
   membersStage?.setAttribute("aria-hidden", String(activeStage !== "members"));
   memberProfileStage?.setAttribute("aria-hidden", String(activeStage !== "member-profile"));
+  
+  DOM.membershipPlansStage?.setAttribute("aria-hidden", String(activeStage !== "membership-plans"));
+  DOM.expiringMembershipsStage?.setAttribute("aria-hidden", String(activeStage !== "expiring-memberships"));
+  DOM.freezePauseStage?.setAttribute("aria-hidden", String(activeStage !== "freeze-pause"));
+  DOM.dailyCheckinStage?.setAttribute("aria-hidden", String(activeStage !== "daily-checkin"));
+  DOM.manualEntryStage?.setAttribute("aria-hidden", String(activeStage !== "manual-entry"));
+  DOM.attendanceReportsStage?.setAttribute("aria-hidden", String(activeStage !== "attendance-reports"));
+  DOM.paymentsStage?.setAttribute("aria-hidden", String(activeStage !== "payments"));
   comingSoonStage?.setAttribute("aria-hidden", String(activeStage !== "coming-soon"));
 };
 
@@ -957,7 +1081,15 @@ const updateMemberResults = () => {
 
 const setActiveView = (viewName) => {
   const safeView = viewLabels[viewName] ? viewName : "dashboard";
+  if (activeView === safeView && activeRoots.has(safeView)) return;
+  
   activeView = safeView;
+  
+  // Lazy mount the required stage
+  mountStageLazy(safeView);
+  
+  // Unmount other heavy stages to free up memory
+  unmountInactiveStages(safeView);
 
   overviewLinks.forEach((link) => {
     const isActive = link.dataset.view === safeView;
@@ -982,16 +1114,20 @@ const setActiveView = (viewName) => {
     comingSoonFeature.textContent = viewLabels[safeView] || "Workspace";
   }
 
-  if (safeView === "dashboard") {
-    setStageVisibility("dashboard");
-  } else if (safeView === "members") {
-    setStageVisibility("members");
+  setStageVisibility(
+    ["dashboard", "members", "member-profiles", "past-members", "membership-pricing", "membership-plans", 
+     "expiring-memberships", "freeze-pause", "daily-checkin", "attendance", "manual-entry", 
+     "attendance-reports", "payments"].includes(safeView) 
+    ? (safeView === "member-profiles" || safeView === "past-members" ? "member-profile" : 
+       safeView === "membership-pricing" || safeView === "membership-plans" ? "membership-plans" :
+       safeView === "attendance" ? "daily-checkin" : safeView)
+    : "coming-soon"
+  );
+
+  if (safeView === "members") {
     updateMemberResults();
   } else if (safeView === "member-profiles" || safeView === "past-members") {
-    setStageVisibility("member-profile");
     window.dispatchEvent(new CustomEvent("memberProfilesRoute", { detail: { screen: safeView } }));
-  } else {
-    setStageVisibility("coming-soon");
   }
 
   const isCompactNavigation = window.matchMedia("(max-width: 1180px)").matches;
@@ -1377,166 +1513,6 @@ membersRefreshButton?.addEventListener("click", () => {
   updateMemberResults();
 });
 
-const formatPhoneHref = (phone = "") => phone.replace(/[^\d+]/g, "");
-
-const resetProfileTabs = () => {
-  profileTabButtons.forEach((tabButton) => {
-    const isActive = tabButton.dataset.profileTab === "payments";
-    tabButton.classList.toggle("is-active", isActive);
-    tabButton.setAttribute("aria-selected", String(isActive));
-  });
-
-  profileTabPanels.forEach((panel) => {
-    const isActive = panel.dataset.profilePanel === "payments";
-    panel.classList.toggle("is-active", isActive);
-    panel.hidden = !isActive;
-  });
-};
-
-const setProfileBadgeClass = (element, baseClass, stateClass) => {
-  if (!element) {
-    return;
-  }
-
-  element.className = `${baseClass} ${stateClass || ""}`.trim();
-};
-
-const updateMemberProfileDetails = (record) => {
-  if (!record || !memberProfileDetailsPanel) {
-    return;
-  }
-
-  const data = record.dataset;
-  const values = {
-    initials: data.initials,
-    name: data.name,
-    statusLabel: data.statusLabel,
-    plan: data.plan,
-    memberId: data.memberId,
-    joinDate: data.joinDate,
-    trainer: data.trainer,
-    riskScore: data.riskScore,
-    riskNote: data.riskNote,
-    identityBadge: data.statusLabel === "Expired" ? "Review" : "Verified",
-    age: data.age,
-    gender: data.gender,
-    height: data.height,
-    weight: data.weight,
-    goal: data.goal,
-    phone: data.phone,
-    whatsapp: data.whatsapp,
-    alternate: data.alternate,
-    email: data.email,
-    address: data.address,
-    checkins: data.checkins,
-    lastVisit: data.lastVisit,
-    visitNote: data.visitNote,
-    trainerName: data.trainer,
-    planBadge: data.statusLabel === "Paused" ? "Freeze Active" : data.planType,
-    planType: data.planType,
-    duration: data.duration,
-    startDate: data.startDate,
-    endDate: data.endDate,
-    nextReview: data.nextReview,
-    totalPaid: data.totalPaid,
-    pending: data.pending,
-    lastPayment: data.lastPayment,
-    paymentMethod: data.paymentMethod,
-    invoiceOwner: data.invoiceOwner,
-    daysLeft: data.daysLeft,
-    expiryDate: data.expiryDate,
-    statusPlan: data.plan,
-    renewalSuggestion: data.daysLeft === "Expired" ? "Renewal overdue" : data.daysLeft
-  };
-
-  memberProfileFieldNodes.forEach((node) => {
-    const value = values[node.dataset.profileField];
-
-    if (value !== undefined) {
-      node.textContent = value;
-    }
-  });
-
-  setProfileBadgeClass(memberProfileStatusBadge, "member-status-badge", data.statusClass);
-  setProfileBadgeClass(memberProfileAttendanceBadge, "", data.attendanceBadgeClass);
-  setProfileBadgeClass(memberProfilePaymentBadge, "", data.paymentBadgeClass);
-  setProfileBadgeClass(memberProfileStatusPanel, "profile-panel status-panel", data.detailPanelClass);
-  setProfileBadgeClass(memberProfileExpiryMeter, "expiry-meter", data.expiryClass);
-
-  if (memberProfileAttendanceBadge) {
-    memberProfileAttendanceBadge.textContent = data.attendanceBadge || "Healthy";
-  }
-
-  if (memberProfilePaymentBadge) {
-    memberProfilePaymentBadge.textContent = data.paymentBadge || "Clear";
-  }
-
-  if (memberProfileExpiryBar) {
-    memberProfileExpiryBar.style.width = data.expiryWidth || "60%";
-  }
-
-  if (memberProfileCallLink) {
-    memberProfileCallLink.href = `tel:${formatPhoneHref(data.phone)}`;
-  }
-
-  if (memberProfileWhatsappLink) {
-    memberProfileWhatsappLink.href = `https://wa.me/${formatPhoneHref(data.whatsapp).replace("+", "")}`;
-  }
-};
-
-const collapseMemberProfileDetails = () => {
-  memberProfileCards.forEach((card) => {
-    card.setAttribute("aria-expanded", "false");
-    card.closest("[data-profile-record]")?.classList.remove("is-expanded");
-  });
-
-  if (memberProfileDetailsPanel) {
-    memberProfileDetailsPanel.hidden = true;
-  }
-};
-
-memberProfileCards.forEach((card) => {
-  card.addEventListener("click", () => {
-    const record = card.closest("[data-profile-record]");
-    const isExpanded = card.getAttribute("aria-expanded") === "true";
-
-    if (!record || !memberProfileDetailsPanel) {
-      return;
-    }
-
-    if (isExpanded) {
-      collapseMemberProfileDetails();
-      return;
-    }
-
-    collapseMemberProfileDetails();
-    updateMemberProfileDetails(record);
-    record.insertAdjacentElement("afterend", memberProfileDetailsPanel);
-    memberProfileDetailsPanel.hidden = false;
-    record.classList.add("is-expanded");
-    card.setAttribute("aria-expanded", "true");
-    resetProfileTabs();
-  });
-});
-
-profileTabButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const targetTab = button.dataset.profileTab;
-
-    profileTabButtons.forEach((tabButton) => {
-      const isActive = tabButton === button;
-      tabButton.classList.toggle("is-active", isActive);
-      tabButton.setAttribute("aria-selected", String(isActive));
-    });
-
-    profileTabPanels.forEach((panel) => {
-      const isActive = panel.dataset.profilePanel === targetTab;
-      panel.classList.toggle("is-active", isActive);
-      panel.hidden = !isActive;
-    });
-  });
-});
-
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     if (!addMemberDatePickerPanel?.hidden) {
@@ -1579,7 +1555,7 @@ document.addEventListener("click", (event) => {
   }
 });
 
-mountMemberProfilesDashboard();
+// Lazy mounting is now handled by setActiveView
 setActiveView(activeView);
 hideDeletedMembersInAllViews();
 refreshSidebarScrollIndicator();

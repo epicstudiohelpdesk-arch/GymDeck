@@ -1,12 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { DotLottiePlayer } from "@dotlottie/react-player";
+import Lottie from "lottie-react";
+import animationData from "/loading-animation.json?url";
 
 /**
  * GymDeck Hero Loading Screen
  * A ultra-minimalist entry focused exclusively on the hand animation.
  */
 const LoadingScreen = ({ isExiting }) => {
+  const [data, setData] = React.useState(null);
+
+  React.useEffect(() => {
+    fetch(animationData)
+      .then((res) => res.json())
+      .then((json) => setData(json))
+      .catch((err) => console.error("Failed to load animation:", err));
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -27,11 +37,13 @@ const LoadingScreen = ({ isExiting }) => {
           }}
           className="w-full h-full"
         >
-          <DotLottiePlayer
-            src="/loading-animation.lottie"
-            autoplay
-            loop
-          />
+          {data && (
+            <Lottie
+              animationData={data}
+              loop={true}
+              autoplay={true}
+            />
+          )}
         </motion.div>
         
         <div className="absolute bottom-44 left-0 right-0 translate-x-[4px] flex flex-col items-center justify-center select-none pointer-events-none">

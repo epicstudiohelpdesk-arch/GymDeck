@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GymDeck Dashboard</title>
+    <title>GymDeck | Dashboard</title>
     <script>
       (() => {
         const authKey = "gymdeck-authenticated";
@@ -19,7 +19,6 @@
     </script>
     <script>
       const mode = sessionStorage.getItem("gymdeck-enter");
-      console.log("GymDeck: Head script entry mode:", mode);
       if (mode === "dashboard") {
         document.documentElement.classList.add("dashboard-enter");
         // Removed removeItem here to allow script.js to detect login state
@@ -35,7 +34,7 @@
   <body>
     <div class="page-shell">
       <aside class="sidebar" id="sidebar-menu">
-        <div class="brand">
+        <a class="brand" href="./index.html">
           <div class="brand-mark">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path
@@ -48,7 +47,7 @@
             <span>Operations Hub</span>
           </div>
           <span class="brand-status" aria-label="Online"></span>
-        </div>
+        </a>
 
         <div class="sidebar-menu-shell">
           <div class="sidebar-menu-scroll">
@@ -111,7 +110,7 @@
                     </span>
                   </button>
                   <div class="nav-sublist">
-                    <a class="nav-subitem" href="#" data-view="attendance">Daily Check-in</a>
+                    <a class="nav-subitem" href="#" data-view="daily-checkin">Daily Check-in</a>
                     <a class="nav-subitem" href="#" data-view="manual-entry">Manual Entry</a>
                     <a class="nav-subitem" href="#" data-view="attendance-reports">Attendance Reports</a>
                   </div>
@@ -342,7 +341,7 @@
         hidden
       >
         <p class="logout-dialog-kicker">Confirm action</p>
-        <h2 id="logout-dialog-title">Log out of <span class="font-ethnocentric text-[0.85em] tracking-normal">GymDeck</span>?</h2>
+        <h2 id="logout-dialog-title">Log out of <span class="font-ethnocentric tracking-normal">GymDeck</span>?</h2>
         <p id="logout-dialog-copy">
           You’ll be redirected to the sign-in page. Do you really want to continue?
         </p>
@@ -400,6 +399,7 @@
         aria-describedby="member-form-copy"
         hidden
       >
+        <div class="drawer-handle"></div>
         <div class="member-form-top">
           <div>
             <p class="member-form-kicker">New Registration</p>
@@ -509,79 +509,93 @@
             <input type="text" placeholder="e.g. 70 kg" />
             <small class="member-field-error" hidden></small>
           </label>
-          <label class="member-field" data-field-label="Govt Document">
+          <div class="member-field member-field-upload member-field-span-2" data-field-label="Govt Document">
             <span>Govt Document <em>*</em></span>
-            <input type="text" placeholder="e.g. Aadhaar Card" required />
-            <div class="member-upload">
-              <input
-                class="member-upload-input"
-                type="file"
-                accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-                data-member-upload-input
-                data-upload-label="Govt Document"
-                hidden
-              />
-              <button class="member-upload-trigger" type="button" data-member-upload-trigger>
-                Upload document
-              </button>
-              <span class="member-upload-meta" data-member-upload-meta>No file selected</span>
-              <div class="member-upload-preview" data-member-upload-preview hidden>
-                <button
-                  class="member-upload-remove"
-                  type="button"
-                  aria-label="Remove uploaded government document"
-                  data-member-upload-remove
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6 18 18" />
-                    <path d="M18 6 6 18" />
+            <div class="member-field-input-group">
+              <input type="text" placeholder="e.g. Aadhaar Card" required />
+              <div class="member-upload">
+                <input
+                  class="member-upload-input"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                  data-member-upload-input
+                  data-upload-label="Govt Document"
+                  hidden
+                />
+                <button class="member-upload-trigger" type="button" data-member-upload-trigger>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; margin-right: 6px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
+                  Upload
                 </button>
-                <img class="member-upload-preview-image" src="" alt="" data-member-upload-image hidden />
-                <iframe class="member-upload-preview-pdf" src="" title="Uploaded PDF preview" data-member-upload-pdf hidden></iframe>
+                <span class="member-upload-meta" data-member-upload-meta>No file selected</span>
+                <div class="member-upload-preview" data-member-upload-preview hidden>
+                  <button
+                    class="member-upload-remove"
+                    type="button"
+                    aria-label="Remove uploaded government document"
+                    data-member-upload-remove
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 6 18 18" />
+                      <path d="M18 6 6 18" />
+                    </svg>
+                  </button>
+                  <img class="member-upload-preview-image" src="" alt="" data-member-upload-image hidden />
+                  <iframe class="member-upload-preview-pdf" src="" title="Uploaded PDF preview" data-member-upload-pdf hidden></iframe>
+                </div>
               </div>
             </div>
             <small class="member-field-error" hidden>Please enter the government document used for verification.</small>
-          </label>
+          </div>
           <label class="member-field member-field-wide" data-field-label="Address">
             <span>Address <em>*</em></span>
             <textarea rows="4" placeholder="Enter complete residential address" required></textarea>
             <small class="member-field-error" hidden>Please enter the residential address.</small>
           </label>
-          <label class="member-field member-field-wide" data-field-label="Proof of Residence">
+          <div class="member-field member-field-wide member-field-upload" data-field-label="Proof of Residence">
             <span>Proof of Residence <em>*</em></span>
-            <input type="text" placeholder="e.g. Electricity Bill / Rent Agreement" required />
-            <div class="member-upload">
-              <input
-                class="member-upload-input"
-                type="file"
-                accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
-                data-member-upload-input
-                data-upload-label="Proof of Residence"
-                hidden
-              />
-              <button class="member-upload-trigger" type="button" data-member-upload-trigger>
-                Upload document
-              </button>
-              <span class="member-upload-meta" data-member-upload-meta>No file selected</span>
-              <div class="member-upload-preview" data-member-upload-preview hidden>
-                <button
-                  class="member-upload-remove"
-                  type="button"
-                  aria-label="Remove uploaded proof of residence"
-                  data-member-upload-remove
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 6 18 18" />
-                    <path d="M18 6 6 18" />
+            <div class="member-field-input-group">
+              <input type="text" placeholder="e.g. Electricity Bill / Rent Agreement" required />
+              <div class="member-upload">
+                <input
+                  class="member-upload-input"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                  data-member-upload-input
+                  data-upload-label="Proof of Residence"
+                  hidden
+                />
+                <button class="member-upload-trigger" type="button" data-member-upload-trigger>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; margin-right: 6px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
+                  Upload
                 </button>
-                <img class="member-upload-preview-image" src="" alt="" data-member-upload-image hidden />
-                <iframe class="member-upload-preview-pdf" src="" title="Uploaded PDF preview" data-member-upload-pdf hidden></iframe>
+                <span class="member-upload-meta" data-member-upload-meta>No file selected</span>
+                <div class="member-upload-preview" data-member-upload-preview hidden>
+                  <button
+                    class="member-upload-remove"
+                    type="button"
+                    aria-label="Remove uploaded proof of residence"
+                    data-member-upload-remove
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 6 18 18" />
+                      <path d="M18 6 6 18" />
+                    </svg>
+                  </button>
+                  <img class="member-upload-preview-image" src="" alt="" data-member-upload-image hidden />
+                  <iframe class="member-upload-preview-pdf" src="" title="Uploaded PDF preview" data-member-upload-pdf hidden></iframe>
+                </div>
               </div>
             </div>
             <small class="member-field-error" hidden>Please enter the proof of residence document.</small>
-          </label>
+          </div>
         </form>
         <div class="member-form-actions">
           <button class="dialog-btn dialog-btn-muted" type="button" data-add-member-close>Cancel</button>
@@ -641,7 +655,7 @@
                     Add Member
                   </button>
                   <button class="table-action" type="button" data-view-target="pending-dues">Review Dues</button>
-                  <button class="table-action muted" type="button" data-view-target="attendance">Check-ins</button>
+                  <button class="table-action muted" type="button" data-view-target="daily-checkin">Check-ins</button>
                 </div>
               </div>
 
@@ -1326,878 +1340,19 @@
             </section>
           </div>
         </section>
-        <section class="member-profile-stage" data-stage="member-profile" aria-hidden="true">
-          <div class="member-profile-shell">
-            <header class="member-profile-page-head">
-              <div>
-                <p class="members-kicker">Member Profiles</p>
-                <h1>Customer lifecycle control</h1>
-                <p>Open any member card to manage identity, money, attendance, status, documents, and trainer notes in one focused workspace.</p>
-              </div>
-              <div class="member-profile-summary">
-                <span>Profiles loaded</span>
-                <strong>6</strong>
-              </div>
-            </header>
+        <section class="member-profile-stage" data-stage="member-profile" aria-hidden="true"></section>
 
-            <section class="member-profile-directory" aria-label="All member profile cards">
-              <div class="member-profile-card-grid" data-profile-card-grid>
-                <article
-                  class="member-profile-record"
-                  data-profile-record
-                  data-name="Rohan Verma"
-                  data-initials="RV"
-                  data-status-label="Active"
-                  data-status-class="active"
-                  data-plan="PT + Strength Plan"
-                  data-member-id="GYM-MBR-0428"
-                  data-join-date="2 Mar 2026"
-                  data-trainer="Ankit Kumar"
-                  data-risk-score="84"
-                  data-risk-note="Renewal ready"
-                  data-age="32 years"
-                  data-gender="Male"
-                  data-height="182 cm"
-                  data-weight="81 kg"
-                  data-goal="Strength gain with 5 kg fat loss"
-                  data-phone="+91 99000 12345"
-                  data-whatsapp="+91 99000 12345"
-                  data-alternate="+91 98450 12345"
-                  data-email="rohan.verma@example.com"
-                  data-address="9 Cedar Park, Indiranagar, Bengaluru, Karnataka"
-                  data-checkins="18"
-                  data-last-visit="Today, 6:25 AM"
-                  data-visit-note="4 visits in the last 7 days"
-                  data-attendance-badge="Healthy"
-                  data-attendance-badge-class="success"
-                  data-plan-type="PT + Strength"
-                  data-duration="90 days"
-                  data-start-date="2 Mar 2026"
-                  data-end-date="30 May 2026"
-                  data-next-review="6 May 2026"
-                  data-total-paid="₹42,500"
-                  data-pending="₹4,500"
-                  data-last-payment="15 Apr 2026"
-                  data-payment-method="UPI"
-                  data-invoice-owner="Billing desk"
-                  data-payment-badge="Due"
-                  data-payment-badge-class="warning"
-                  data-days-left="28 days left"
-                  data-expiry-date="30 May"
-                  data-expiry-class="healthy"
-                  data-expiry-width="68%"
-                  data-detail-panel-class="healthy"
-                >
-                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
-                    <span class="card-avatar">RV</span>
-                    <span class="card-main">
-                      <strong>Rohan Verma</strong>
-                      <small>GYM-MBR-0428 · PT + Strength Plan</small>
-                    </span>
-                    <mark class="member-status-badge active"><span></span><b>Active</b></mark>
-                    <span class="card-metric"><small>Due</small><strong>₹4,500</strong></span>
-                    <span class="card-metric"><small>Last visit</small><strong>Today</strong></span>
-                    <span class="card-chevron" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
-                    </span>
-                  </button>
-                </article>
-
-                <article
-                  class="member-profile-record"
-                  data-profile-record
-                  data-name="Aisha Khan"
-                  data-initials="AK"
-                  data-status-label="Payment Due"
-                  data-status-class="due"
-                  data-plan="Monthly Fitness"
-                  data-member-id="GYM-MBR-0417"
-                  data-join-date="12 Jan 2026"
-                  data-trainer="Sneha Patel"
-                  data-risk-score="61"
-                  data-risk-note="Payment attention"
-                  data-age="29 years"
-                  data-gender="Female"
-                  data-height="167 cm"
-                  data-weight="62 kg"
-                  data-goal="Fat loss and conditioning"
-                  data-phone="+91 98111 22440"
-                  data-whatsapp="+91 98111 22440"
-                  data-alternate="+91 98111 22441"
-                  data-email="aisha.khan@example.com"
-                  data-address="18 Garden Street, Koramangala, Bengaluru, Karnataka"
-                  data-checkins="9"
-                  data-last-visit="Yesterday, 7:15 PM"
-                  data-visit-note="2 missed visits this week"
-                  data-attendance-badge="Watch"
-                  data-attendance-badge-class="warning"
-                  data-plan-type="Monthly Fitness"
-                  data-duration="30 days"
-                  data-start-date="18 Apr 2026"
-                  data-end-date="17 May 2026"
-                  data-next-review="8 May 2026"
-                  data-total-paid="₹18,000"
-                  data-pending="₹2,499"
-                  data-last-payment="18 Apr 2026"
-                  data-payment-method="Cash"
-                  data-invoice-owner="Billing desk"
-                  data-payment-badge="Due"
-                  data-payment-badge-class="warning"
-                  data-days-left="15 days left"
-                  data-expiry-date="17 May"
-                  data-expiry-class="healthy"
-                  data-expiry-width="52%"
-                  data-detail-panel-class="healthy"
-                >
-                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
-                    <span class="card-avatar">AK</span>
-                    <span class="card-main">
-                      <strong>Aisha Khan</strong>
-                      <small>GYM-MBR-0417 · Monthly Fitness</small>
-                    </span>
-                    <mark class="member-status-badge due"><span></span><b>Payment Due</b></mark>
-                    <span class="card-metric danger"><small>Due</small><strong>₹2,499</strong></span>
-                    <span class="card-metric"><small>Last visit</small><strong>Yesterday</strong></span>
-                    <span class="card-chevron" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
-                    </span>
-                  </button>
-                </article>
-
-                <article
-                  class="member-profile-record"
-                  data-profile-record
-                  data-name="Karthik Rao"
-                  data-initials="KR"
-                  data-status-label="Expired"
-                  data-status-class="expired"
-                  data-plan="PT Package"
-                  data-member-id="GYM-MBR-0398"
-                  data-join-date="7 Dec 2025"
-                  data-trainer="Manav Rao"
-                  data-risk-score="38"
-                  data-risk-note="Renewal blocked"
-                  data-age="35 years"
-                  data-gender="Male"
-                  data-height="176 cm"
-                  data-weight="78 kg"
-                  data-goal="Muscle gain"
-                  data-phone="+91 99002 44331"
-                  data-whatsapp="+91 99002 44331"
-                  data-alternate="+91 99002 44332"
-                  data-email="karthik.rao@example.com"
-                  data-address="44 Orchid Lane, BTM Layout, Bengaluru, Karnataka"
-                  data-checkins="4"
-                  data-last-visit="26 Apr 2026"
-                  data-visit-note="Low attendance risk"
-                  data-attendance-badge="Low"
-                  data-attendance-badge-class="warning"
-                  data-plan-type="PT Package"
-                  data-duration="60 days"
-                  data-start-date="25 Feb 2026"
-                  data-end-date="26 Apr 2026"
-                  data-next-review="Overdue"
-                  data-total-paid="₹24,000"
-                  data-pending="₹8,000"
-                  data-last-payment="25 Feb 2026"
-                  data-payment-method="UPI"
-                  data-invoice-owner="Trainer"
-                  data-payment-badge="Overdue"
-                  data-payment-badge-class="warning"
-                  data-days-left="Expired"
-                  data-expiry-date="26 Apr"
-                  data-expiry-class="danger"
-                  data-expiry-width="100%"
-                  data-detail-panel-class="danger"
-                >
-                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
-                    <span class="card-avatar">KR</span>
-                    <span class="card-main">
-                      <strong>Karthik Rao</strong>
-                      <small>GYM-MBR-0398 · PT Package</small>
-                    </span>
-                    <mark class="member-status-badge expired"><span></span><b>Expired</b></mark>
-                    <span class="card-metric danger"><small>Due</small><strong>₹8,000</strong></span>
-                    <span class="card-metric"><small>Last visit</small><strong>26 Apr</strong></span>
-                    <span class="card-chevron" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
-                    </span>
-                  </button>
-                </article>
-
-                <article
-                  class="member-profile-record"
-                  data-profile-record
-                  data-name="Meera Nair"
-                  data-initials="MN"
-                  data-status-label="Active"
-                  data-status-class="active"
-                  data-plan="Quarterly Fitness"
-                  data-member-id="GYM-MBR-0435"
-                  data-join-date="16 Feb 2026"
-                  data-trainer="Sneha Patel"
-                  data-risk-score="91"
-                  data-risk-note="Healthy member"
-                  data-age="27 years"
-                  data-gender="Female"
-                  data-height="164 cm"
-                  data-weight="57 kg"
-                  data-goal="Strength and mobility"
-                  data-phone="+91 98989 81212"
-                  data-whatsapp="+91 98989 81212"
-                  data-alternate="+91 98111 22233"
-                  data-email="meera.nair@example.com"
-                  data-address="31 HSR Main Road, Bengaluru, Karnataka"
-                  data-checkins="21"
-                  data-last-visit="Today, 6:18 PM"
-                  data-visit-note="6 visits in the last 7 days"
-                  data-attendance-badge="Healthy"
-                  data-attendance-badge-class="success"
-                  data-plan-type="Quarterly Fitness"
-                  data-duration="90 days"
-                  data-start-date="16 Feb 2026"
-                  data-end-date="16 May 2026"
-                  data-next-review="9 May 2026"
-                  data-total-paid="₹21,000"
-                  data-pending="₹0"
-                  data-last-payment="16 Feb 2026"
-                  data-payment-method="Card"
-                  data-invoice-owner="Front desk"
-                  data-payment-badge="Clear"
-                  data-payment-badge-class="success"
-                  data-days-left="14 days left"
-                  data-expiry-date="16 May"
-                  data-expiry-class="healthy"
-                  data-expiry-width="48%"
-                  data-detail-panel-class="healthy"
-                >
-                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
-                    <span class="card-avatar">MN</span>
-                    <span class="card-main">
-                      <strong>Meera Nair</strong>
-                      <small>GYM-MBR-0435 · Quarterly Fitness</small>
-                    </span>
-                    <mark class="member-status-badge active"><span></span><b>Active</b></mark>
-                    <span class="card-metric"><small>Due</small><strong>₹0</strong></span>
-                    <span class="card-metric"><small>Last visit</small><strong>Today</strong></span>
-                    <span class="card-chevron" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
-                    </span>
-                  </button>
-                </article>
-
-                <article
-                  class="member-profile-record"
-                  data-profile-record
-                  data-name="Aarav Sharma"
-                  data-initials="AS"
-                  data-status-label="Paused"
-                  data-status-class="paused"
-                  data-plan="Premium Annual"
-                  data-member-id="GYM-MBR-0403"
-                  data-join-date="4 Jan 2026"
-                  data-trainer="Ankit Kumar"
-                  data-risk-score="56"
-                  data-risk-note="Paused account"
-                  data-age="30 years"
-                  data-gender="Male"
-                  data-height="178 cm"
-                  data-weight="74 kg"
-                  data-goal="Lean muscle maintenance"
-                  data-phone="+91 98765 43210"
-                  data-whatsapp="+91 98765 43210"
-                  data-alternate="+91 91234 56780"
-                  data-email="aarav.sharma@example.com"
-                  data-address="14 Lakeview Avenue, Andheri West, Mumbai, Maharashtra"
-                  data-checkins="0"
-                  data-last-visit="Paused since 20 Apr"
-                  data-visit-note="Membership freeze active"
-                  data-attendance-badge="Paused"
-                  data-attendance-badge-class="neutral"
-                  data-plan-type="Premium Annual"
-                  data-duration="365 days"
-                  data-start-date="4 Jan 2026"
-                  data-end-date="4 Jan 2027"
-                  data-next-review="20 May 2026"
-                  data-total-paid="₹48,000"
-                  data-pending="₹0"
-                  data-last-payment="4 Jan 2026"
-                  data-payment-method="Bank transfer"
-                  data-invoice-owner="Front desk"
-                  data-payment-badge="Clear"
-                  data-payment-badge-class="success"
-                  data-days-left="Freeze active"
-                  data-expiry-date="4 Jan"
-                  data-expiry-class="warning"
-                  data-expiry-width="38%"
-                  data-detail-panel-class="warning"
-                >
-                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
-                    <span class="card-avatar">AS</span>
-                    <span class="card-main">
-                      <strong>Aarav Sharma</strong>
-                      <small>GYM-MBR-0403 · Premium Annual</small>
-                    </span>
-                    <mark class="member-status-badge paused"><span></span><b>Paused</b></mark>
-                    <span class="card-metric"><small>Due</small><strong>₹0</strong></span>
-                    <span class="card-metric"><small>Last visit</small><strong>Paused</strong></span>
-                    <span class="card-chevron" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
-                    </span>
-                  </button>
-                </article>
-
-                <article
-                  class="member-profile-record"
-                  data-profile-record
-                  data-name="Siya Mehta"
-                  data-initials="SM"
-                  data-status-label="Active"
-                  data-status-class="active"
-                  data-plan="Quarterly Fitness"
-                  data-member-id="GYM-MBR-0441"
-                  data-join-date="16 Feb 2026"
-                  data-trainer="Manav Rao"
-                  data-risk-score="78"
-                  data-risk-note="Good retention"
-                  data-age="26 years"
-                  data-gender="Female"
-                  data-height="165 cm"
-                  data-weight="58 kg"
-                  data-goal="Fat loss and strength"
-                  data-phone="+91 98111 22233"
-                  data-whatsapp="+91 98111 22233"
-                  data-alternate="+91 98989 81212"
-                  data-email="siya.mehta@example.com"
-                  data-address="22 Sunrise Enclave, Satellite, Ahmedabad, Gujarat"
-                  data-checkins="16"
-                  data-last-visit="1 May 2026"
-                  data-visit-note="Attendance trend stable"
-                  data-attendance-badge="Healthy"
-                  data-attendance-badge-class="success"
-                  data-plan-type="Quarterly Fitness"
-                  data-duration="90 days"
-                  data-start-date="16 Feb 2026"
-                  data-end-date="16 May 2026"
-                  data-next-review="7 May 2026"
-                  data-total-paid="₹19,500"
-                  data-pending="₹0"
-                  data-last-payment="16 Feb 2026"
-                  data-payment-method="UPI"
-                  data-invoice-owner="Front desk"
-                  data-payment-badge="Clear"
-                  data-payment-badge-class="success"
-                  data-days-left="14 days left"
-                  data-expiry-date="16 May"
-                  data-expiry-class="healthy"
-                  data-expiry-width="48%"
-                  data-detail-panel-class="healthy"
-                >
-                  <button class="member-profile-card" type="button" data-profile-card aria-expanded="false" aria-controls="member-profile-expanded">
-                    <span class="card-avatar">SM</span>
-                    <span class="card-main">
-                      <strong>Siya Mehta</strong>
-                      <small>GYM-MBR-0441 · Quarterly Fitness</small>
-                    </span>
-                    <mark class="member-status-badge active"><span></span><b>Active</b></mark>
-                    <span class="card-metric"><small>Due</small><strong>₹0</strong></span>
-                    <span class="card-metric"><small>Last visit</small><strong>1 May</strong></span>
-                    <span class="card-chevron" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" /></svg>
-                    </span>
-                  </button>
-                </article>
-
-                <section class="profile-expand-panel" id="member-profile-expanded" data-profile-details-panel hidden>
-            <header class="profile-identity-strip" aria-label="Member identity">
-              <div class="profile-person">
-                <button class="profile-avatar" type="button" aria-label="View Rohan Verma profile photo">
-                  <span data-profile-field="initials">RV</span>
-                </button>
-                <div class="profile-title-block">
-                  <div class="profile-title-row">
-                    <h1 data-profile-field="name">Rohan Verma</h1>
-                    <mark class="member-status-badge active" data-profile-status-badge>
-                      <span></span>
-                      <b data-profile-field="statusLabel">Active</b>
-                    </mark>
-                  </div>
-                  <div class="profile-meta-row" aria-label="Member profile metadata">
-                    <span data-profile-field="plan">PT + Strength Plan</span>
-                    <span>ID: <b data-profile-field="memberId">GYM-MBR-0428</b></span>
-                    <span>Joined <b data-profile-field="joinDate">2 Mar 2026</b></span>
-                    <span>Trainer: <b data-profile-field="trainer">Ankit Kumar</b></span>
-                  </div>
-                </div>
-              </div>
-              <div class="profile-risk-panel" aria-label="Lifecycle status">
-                <span>Lifecycle Score</span>
-                <strong data-profile-field="riskScore">84</strong>
-                <small data-profile-field="riskNote">Renewal ready</small>
-              </div>
-            </header>
-
-            <section class="profile-action-bar" aria-label="Quick actions">
-              <button class="profile-action primary" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3.5" y="5" width="17" height="14" rx="3" />
-                  <path d="M3.5 9h17" />
-                  <path d="M7.5 15h4" />
-                </svg>
-                Collect Payment
-              </button>
-              <button class="profile-action" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M20 11a8 8 0 1 0-2.3 5.7" />
-                  <path d="M20 5v6h-6" />
-                </svg>
-                Renew Membership
-              </button>
-              <button class="profile-action" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 4h8l3 3v13H7z" />
-                  <path d="M14 4v4h4" />
-                  <path d="m9 13 2 2 4-4" />
-                </svg>
-                Mark Attendance
-              </button>
-              <button class="profile-action" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 12h3l8-5v10l-8-5H4z" />
-                  <path d="M18 9.5a4 4 0 0 1 0 5" />
-                </svg>
-                Send Message
-              </button>
-              <button class="profile-action quiet" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m14.5 5.5 4 4" />
-                  <path d="M4 20h4.2L19 9.2 14.8 5 4 15.8z" />
-                </svg>
-                Edit Profile
-              </button>
-            </section>
-
-            <section class="profile-main-grid" aria-label="Member control panel">
-              <div class="profile-left-column">
-                <article class="profile-panel personal-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Core Identity</span>
-                      <h2>Personal Details</h2>
-                    </div>
-                    <strong data-profile-field="identityBadge">Verified</strong>
-                  </div>
-                  <div class="profile-info-grid compact">
-                    <div>
-                      <span>Age</span>
-                      <strong data-profile-field="age">32 years</strong>
-                    </div>
-                    <div>
-                      <span>Gender</span>
-                      <strong data-profile-field="gender">Male</strong>
-                    </div>
-                    <div>
-                      <span>Height</span>
-                      <strong data-profile-field="height">182 cm</strong>
-                    </div>
-                    <div>
-                      <span>Weight</span>
-                      <strong data-profile-field="weight">81 kg</strong>
-                    </div>
-                    <div class="wide">
-                      <span>Fitness Goal</span>
-                      <strong data-profile-field="goal">Strength gain with 5 kg fat loss</strong>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="profile-panel contact-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Contact</span>
-                      <h2>Reachability</h2>
-                    </div>
-                    <div class="profile-contact-actions">
-                      <a class="profile-mini-action" href="tel:+919900012345" data-profile-call>
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8 9.7a16 16 0 0 0 6.3 6.3l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6A2 2 0 0 1 22 16.9Z" />
-                        </svg>
-                        Call
-                      </a>
-                      <a class="profile-mini-action whatsapp" href="https://wa.me/919900012345" data-profile-whatsapp>
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M5.2 19.1 6 16.2a7.8 7.8 0 1 1 3 2.7z" />
-                          <path d="M9.4 8.7c.2 3 2 4.8 4.9 5.7" />
-                          <path d="m14.3 14.4 1.5-.8" />
-                          <path d="m8.9 8.2.7-1.5" />
-                        </svg>
-                        WhatsApp
-                      </a>
-                    </div>
-                  </div>
-                  <div class="contact-list">
-                    <div>
-                      <span>Primary Phone</span>
-                      <strong data-profile-field="phone">+91 99000 12345</strong>
-                    </div>
-                    <div>
-                      <span>WhatsApp</span>
-                      <strong data-profile-field="whatsapp">+91 99000 12345</strong>
-                    </div>
-                    <div>
-                      <span>Alternate</span>
-                      <strong data-profile-field="alternate">+91 98450 12345</strong>
-                    </div>
-                    <div>
-                      <span>Email</span>
-                      <strong data-profile-field="email">rohan.verma@example.com</strong>
-                    </div>
-                    <div class="wide">
-                      <span>Address</span>
-                      <strong data-profile-field="address">9 Cedar Park, Indiranagar, Bengaluru, Karnataka</strong>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="profile-panel attendance-snapshot-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Activity</span>
-                      <h2>Attendance Snapshot</h2>
-                    </div>
-                    <strong class="success" data-profile-attendance-badge>Healthy</strong>
-                  </div>
-                  <div class="attendance-summary">
-                    <div class="attendance-primary">
-                      <span>This Month</span>
-                      <strong data-profile-field="checkins">18</strong>
-                      <small>Check-ins total</small>
-                    </div>
-                    <div class="attendance-detail">
-                      <span>Last Visit</span>
-                      <strong data-profile-field="lastVisit">Today, 6:25 AM</strong>
-                      <small data-profile-field="visitNote">4 visits in the last 7 days</small>
-                    </div>
-                    <div class="mini-attendance-chart" aria-label="Attendance trend">
-                      <span style="height: 42%"></span>
-                      <span style="height: 64%"></span>
-                      <span style="height: 52%"></span>
-                      <span style="height: 78%"></span>
-                      <span style="height: 68%"></span>
-                      <span style="height: 84%"></span>
-                      <span style="height: 72%"></span>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="profile-panel plan-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Coaching</span>
-                      <h2>Trainer &amp; Plan Info</h2>
-                    </div>
-                    <strong data-profile-field="planBadge">PT Active</strong>
-                  </div>
-                  <div class="plan-info-grid">
-                    <div>
-                      <span>Assigned Trainer</span>
-                      <strong data-profile-field="trainerName">Ankit Kumar</strong>
-                    </div>
-                    <div>
-                      <span>Plan Type</span>
-                      <strong data-profile-field="planType">PT + Strength</strong>
-                    </div>
-                    <div>
-                      <span>Duration</span>
-                      <strong data-profile-field="duration">90 days</strong>
-                    </div>
-                    <div>
-                      <span>Start Date</span>
-                      <strong data-profile-field="startDate">2 Mar 2026</strong>
-                    </div>
-                    <div>
-                      <span>End Date</span>
-                      <strong data-profile-field="endDate">30 May 2026</strong>
-                    </div>
-                    <div>
-                      <span>Next Review</span>
-                      <strong data-profile-field="nextReview">6 May 2026</strong>
-                    </div>
-                  </div>
-                </article>
-              </div>
-
-              <aside class="profile-right-column" aria-label="Financial and risk status">
-                <article class="profile-panel payment-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Money</span>
-                      <h2>Payment Summary</h2>
-                    </div>
-                    <strong class="warning" data-profile-payment-badge>Due</strong>
-                  </div>
-                  <div class="payment-total-row">
-                    <div>
-                      <span>Total Paid</span>
-                      <strong data-profile-field="totalPaid">₹42,500</strong>
-                    </div>
-                    <div>
-                      <span>Pending</span>
-                      <strong data-profile-field="pending">₹4,500</strong>
-                    </div>
-                  </div>
-                  <dl class="payment-facts">
-                    <div>
-                      <dt>Last payment</dt>
-                      <dd data-profile-field="lastPayment">15 Apr 2026</dd>
-                    </div>
-                    <div>
-                      <dt>Payment method</dt>
-                      <dd data-profile-field="paymentMethod">UPI</dd>
-                    </div>
-                    <div>
-                      <dt>Invoice owner</dt>
-                      <dd data-profile-field="invoiceOwner">Billing desk</dd>
-                    </div>
-                  </dl>
-                </article>
-
-                <article class="profile-panel status-panel healthy" data-profile-status-panel>
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Membership</span>
-                      <h2>Status Card</h2>
-                    </div>
-                    <strong data-profile-field="daysLeft">28 days left</strong>
-                  </div>
-                  <div class="expiry-meter healthy" aria-label="Membership time remaining" data-profile-expiry-meter>
-                    <strong data-profile-field="expiryDate">30 May</strong>
-                    <span>Expiry Date</span>
-                    <i style="width: 68%" data-profile-expiry-bar></i>
-                  </div>
-                  <div class="status-facts">
-                    <div>
-                      <span>Plan Name</span>
-                      <strong data-profile-field="statusPlan">PT + Strength Plan</strong>
-                    </div>
-                    <div>
-                      <span>Risk Rule</span>
-                      <strong>Red below 3 days, yellow below 7 days</strong>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="profile-panel alerts-control-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Alerts</span>
-                      <h2>Action Queue</h2>
-                    </div>
-                    <strong>3 open</strong>
-                  </div>
-                  <div class="profile-alert-list">
-                    <div class="profile-alert due">
-                      <span></span>
-                      <div>
-                        <strong>Payment due</strong>
-                        <p>₹4,500 pending for PT package extension.</p>
-                      </div>
-                      <button type="button">Collect</button>
-                    </div>
-                    <div class="profile-alert warning">
-                      <span></span>
-                      <div>
-                        <strong>Low attendance risk</strong>
-                        <p>2 missed morning sessions in the last 10 days.</p>
-                      </div>
-                      <button type="button">Message</button>
-                    </div>
-                    <div class="profile-alert expiring">
-                      <span></span>
-                      <div>
-                        <strong>Plan expiring</strong>
-                        <p>Renewal conversation should start before 23 May.</p>
-                      </div>
-                      <button type="button">Renew</button>
-                    </div>
-                  </div>
-                </article>
-
-                <article class="profile-panel suggestions-panel">
-                  <div class="profile-panel-head">
-                    <div>
-                      <span>Smart Suggestions</span>
-                      <h2>Next Best Moves</h2>
-                    </div>
-                  </div>
-                  <div class="suggestion-list">
-                    <button type="button">
-                      <span>Offer PT plan</span>
-                      <strong>Good conversion signal</strong>
-                    </button>
-                    <button type="button">
-                      <span>Send renewal reminder</span>
-                      <strong data-profile-field="renewalSuggestion">28 days remaining</strong>
-                    </button>
-                  </div>
-                </article>
-              </aside>
-            </section>
-
-            <section class="profile-deep-data" aria-label="Detailed member data">
-              <div class="profile-tabs" role="tablist" aria-label="Member records">
-                <button class="is-active" type="button" role="tab" aria-selected="true" aria-controls="profile-tab-payments" id="profile-tab-button-payments" data-profile-tab="payments">
-                  Payments History
-                </button>
-                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-attendance" id="profile-tab-button-attendance" data-profile-tab="attendance">
-                  Attendance History
-                </button>
-                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-progress" id="profile-tab-button-progress" data-profile-tab="progress">
-                  Progress Tracking
-                </button>
-                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-documents" id="profile-tab-button-documents" data-profile-tab="documents">
-                  Documents
-                </button>
-                <button type="button" role="tab" aria-selected="false" aria-controls="profile-tab-notes" id="profile-tab-button-notes" data-profile-tab="notes">
-                  Trainer Notes
-                </button>
-              </div>
-
-              <div class="profile-tab-panel is-active" role="tabpanel" tabindex="0" id="profile-tab-payments" aria-labelledby="profile-tab-button-payments" data-profile-panel="payments">
-                <div class="profile-table-wrap">
-                  <table class="profile-record-table">
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Method</th>
-                        <th>Status</th>
-                        <th>Receipt</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>15 Apr 2026</td>
-                        <td>₹12,500</td>
-                        <td>UPI</td>
-                        <td><mark class="status active">Paid</mark></td>
-                        <td><button class="table-download-btn" type="button">Download</button></td>
-                      </tr>
-                      <tr>
-                        <td>2 Mar 2026</td>
-                        <td>₹30,000</td>
-                        <td>Card</td>
-                        <td><mark class="status active">Paid</mark></td>
-                        <td><button class="table-download-btn" type="button">Download</button></td>
-                      </tr>
-                      <tr>
-                        <td>1 May 2026</td>
-                        <td>₹4,500</td>
-                        <td>Pending</td>
-                        <td><mark class="status pending">Due</mark></td>
-                        <td><button class="table-download-btn muted" type="button">Generate</button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-attendance" aria-labelledby="profile-tab-button-attendance" data-profile-panel="attendance" hidden>
-                <div class="attendance-log-grid">
-                  <div class="attendance-log-item active">
-                    <span>2 May</span>
-                    <strong>6:25 AM</strong>
-                    <small>Strength floor</small>
-                  </div>
-                  <div class="attendance-log-item active">
-                    <span>1 May</span>
-                    <strong>7:10 AM</strong>
-                    <small>PT session</small>
-                  </div>
-                  <div class="attendance-log-item missed">
-                    <span>30 Apr</span>
-                    <strong>No visit</strong>
-                    <small>Rest day</small>
-                  </div>
-                  <div class="attendance-log-item active">
-                    <span>29 Apr</span>
-                    <strong>6:45 AM</strong>
-                    <small>Conditioning</small>
-                  </div>
-                  <div class="attendance-log-item active">
-                    <span>28 Apr</span>
-                    <strong>7:02 AM</strong>
-                    <small>Strength floor</small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-progress" aria-labelledby="profile-tab-button-progress" data-profile-panel="progress" hidden>
-                <div class="progress-tracking-grid">
-                  <div class="progress-metric">
-                    <span>Weight</span>
-                    <strong>84 kg to 81 kg</strong>
-                    <i style="width: 62%"></i>
-                  </div>
-                  <div class="progress-metric">
-                    <span>Waist</span>
-                    <strong>36 in to 34.5 in</strong>
-                    <i style="width: 54%"></i>
-                  </div>
-                  <div class="progress-metric">
-                    <span>Goal Progress</span>
-                    <strong>64%</strong>
-                    <i style="width: 64%"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-documents" aria-labelledby="profile-tab-button-documents" data-profile-panel="documents" hidden>
-                <div class="document-record-grid">
-                  <div>
-                    <span>Aadhaar / ID Proof</span>
-                    <strong>Verified 3 Mar 2026</strong>
-                    <button type="button">View</button>
-                  </div>
-                  <div>
-                    <span>Membership Agreement</span>
-                    <strong>Signed 2 Mar 2026</strong>
-                    <button type="button">Download</button>
-                  </div>
-                  <div>
-                    <span>Medical Declaration</span>
-                    <strong>Updated 28 Apr 2026</strong>
-                    <button type="button">View</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="profile-tab-panel" role="tabpanel" tabindex="0" id="profile-tab-notes" aria-labelledby="profile-tab-button-notes" data-profile-panel="notes" hidden>
-                <div class="trainer-notes-list">
-                  <article>
-                    <span>2 May 2026</span>
-                    <strong>Increase deadlift load gradually. No lower-back discomfort reported.</strong>
-                  </article>
-                  <article>
-                    <span>29 Apr 2026</span>
-                    <strong>Good adherence. Add mobility block after leg day.</strong>
-                  </article>
-                  <article>
-                    <span>Restrictions</span>
-                    <strong>Avoid high-volume jumping drills until knee stability check is complete.</strong>
-                  </article>
-                </div>
-              </div>
-            </section>
-                </section>
-              </div>
-            </section>
-          </div>
-        </section>
+    <section class="membership-plans-stage" data-stage="membership-plans" aria-hidden="true"></section>
+        <section class="expiring-memberships-stage" data-stage="expiring-memberships" aria-hidden="true"></section>
+        <section class="freeze-pause-stage" data-stage="freeze-pause" aria-hidden="true"></section>
+        <section class="daily-checkin-stage" data-stage="daily-checkin" aria-hidden="true"></section>
+        <section class="manual-entry-stage" data-stage="manual-entry" aria-hidden="true"></section>
+        <section class="attendance-reports-stage" data-stage="attendance-reports" aria-hidden="true"></section>
+        <section class="payments-stage" data-stage="payments" aria-hidden="true"></section>
         <section class="coming-soon-stage" data-stage="coming-soon" aria-live="polite" aria-hidden="true">
           <div class="coming-soon-shell">
             <div class="coming-soon-copy">
-              <p class="coming-soon-kicker"><span class="font-ethnocentric text-[0.85em] tracking-normal">GymDeck</span> Workspace</p>
+              <p class="coming-soon-kicker"><span class="font-ethnocentric tracking-normal">GymDeck</span> Workspace</p>
               <h1 class="coming-soon-title">Coming Soon</h1>
               <p class="coming-soon-text">
                 <span class="coming-soon-feature">Members</span>

@@ -33,6 +33,10 @@ app.use((req, res, next) => {
 // Public routes (no authentication required)
 app.use("/auth", authRoutes);
 
+// Serve static files for authentication and public assets
+app.use("/authentication", express.static("authentication"));
+app.use("/public", express.static("public"));
+
 // Login page
 app.get("/login", (req, res) => {
   if (req.session.user) {
@@ -80,10 +84,6 @@ const protectedStatic = (req, res, next) => {
 
 app.use("/frontend", protectedStatic);
 
-// Public static files (no auth required)
-app.use("/authentication", express.static("authentication"));
-app.use("/public", express.static("public"));
-
 // Logout
 app.get("/logout", (req, res) => {
   clearAuthData(req);
@@ -102,11 +102,6 @@ app.get("/api/auth/status", (req, res) => {
     user: req.session.user ? { email: req.session.user.email } : null,
   });
 });
-
-// Serve static files (styles, images, etc.)
-app.use(express.static("authentication"));
-app.use(express.static("frontend"));
-app.use(express.static("public"));
 
 // 404 handler for protected routes
 app.use((req, res, next) => {

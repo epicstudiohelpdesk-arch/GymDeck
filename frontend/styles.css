@@ -124,7 +124,7 @@ body.is-logging-out .page-shell {
   flex-direction: column;
   overflow: hidden;
   gap: 14px;
-  z-index: 4;
+  z-index: 1000;
 }
 
 .sidebar-overlay,
@@ -136,23 +136,23 @@ body.is-logging-out .page-shell {
   position: absolute;
   inset: 0;
   background: rgba(14, 18, 28, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 120ms ease;
-  z-index: 3;
+  z-index: 900;
 }
 
 .logout-dialog-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(14, 18, 28, 0.44);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   opacity: 0;
   transition: opacity 180ms ease;
-  z-index: 20;
+  z-index: 10000;
 }
 
 .logout-dialog {
@@ -168,29 +168,29 @@ body.is-logging-out .page-shell {
   transform: translate(-50%, -50%) scale(0.96);
   opacity: 0;
   transition: opacity 180ms ease, transform 180ms ease;
-  z-index: 21;
+  z-index: 10001;
 }
 
 .document-modal-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(9, 12, 21, 0.5);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   transition: opacity 220ms ease;
-  z-index: 24;
+  z-index: 10000;
 }
 
 .member-form-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(9, 12, 21, 0.54);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(4, 6, 12, 0.72);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
   opacity: 0;
-  transition: opacity 220ms ease;
-  z-index: 26;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10000;
 }
 
 .document-modal {
@@ -210,27 +210,47 @@ body.is-logging-out .page-shell {
   transform: translate(-50%, -50%) scale(0.94);
   opacity: 0;
   transition: opacity 220ms ease, transform 220ms ease;
-  z-index: 25;
+  z-index: 10001;
+}
+
+.drawer-handle {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 5px;
+  background: rgba(15, 23, 42, 0.08);
+  border-radius: 10px;
+  z-index: 10;
 }
 
 .member-form-modal {
   position: fixed;
-  top: 50%;
+  bottom: 0;
   left: 50%;
-  width: min(94vw, 760px);
-  max-height: min(88vh, 860px);
+  width: min(100vw, 1100px);
+  height: 88vh;
+  max-height: 88vh;
   overflow-y: auto;
-  padding: 30px;
-  border-radius: 30px;
+  padding: 40px;
+  border-radius: 32px 32px 0 0;
   background:
     radial-gradient(circle at top right, rgba(255, 255, 255, 0.56), transparent 24%),
     linear-gradient(160deg, rgba(255, 255, 255, 0.99), rgba(243, 247, 255, 0.97));
   border: 1px solid rgba(255, 255, 255, 0.92);
-  box-shadow: 0 34px 84px rgba(26, 36, 60, 0.24);
-  transform: translate(-50%, -50%) scale(0.94);
-  opacity: 0;
-  transition: opacity 220ms ease, transform 220ms ease;
-  z-index: 27;
+  border-bottom: none;
+  box-shadow: 0 -20px 80px rgba(26, 36, 60, 0.18);
+  transform: translateX(-50%) translateY(100%);
+  opacity: 1;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10001;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.member-form-modal::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .document-modal[hidden],
@@ -249,13 +269,12 @@ body.document-modal-open .document-modal {
   transform: translate(-50%, -50%) scale(1);
 }
 
-body.member-form-open .member-form-backdrop,
-body.member-form-open .member-form-modal {
+body.member-form-open .member-form-backdrop {
   opacity: 1;
 }
 
 body.member-form-open .member-form-modal {
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateX(-50%) translateY(0);
 }
 
 .logout-dialog[hidden],
@@ -381,23 +400,28 @@ body.logout-dialog-open .logout-dialog {
 
 .member-form-kicker {
   margin: 0 0 10px;
-  color: #8a90a0;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  color: #3182ce;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 .member-form-modal h2 {
   margin: 0;
-  font-size: clamp(1.7rem, 2.8vw, 2.2rem);
-  letter-spacing: -0.05em;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #1a202c;
+  letter-spacing: -0.02em;
 }
 
 .member-form-copy {
   margin: 14px 0 0;
-  color: #666d80;
-  line-height: 1.75;
+  font-size: 0.92rem;
+  color: #596176;
+  max-width: 600px;
+  line-height: 1.6;
+  font-weight: 600;
 }
 
 .member-form-alert {
@@ -412,15 +436,43 @@ body.logout-dialog-open .logout-dialog {
 }
 
 .member-form-grid {
-  margin-top: 24px;
+  margin-top: 32px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 24px;
+  align-items: start;
+}
+
+.member-field-wide {
+  grid-column: span 3;
+}
+
+.member-field-span-2 {
+  grid-column: span 2;
 }
 
 .member-field {
   display: grid;
   gap: 8px;
+}
+
+.member-field input:not([type="file"]),
+.member-field textarea {
+  padding: 12px 16px;
+  height: 44px;
+}
+
+.member-field textarea {
+  height: auto;
+}
+
+.member-form-actions {
+  margin-top: 40px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .member-field span {
@@ -453,36 +505,68 @@ body.logout-dialog-open .logout-dialog {
   transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 }
 
+.member-field-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fcfdfe;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 18px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.member-field-input-group:focus-within {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.member-field-input-group input {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  height: 32px !important;
+  font-size: 0.95rem !important;
+  box-shadow: none !important;
+}
+
+.member-field-input-group input:focus {
+  outline: none !important;
+}
+
 .member-upload {
   display: flex;
   align-items: center;
-  gap: 14px;
-  flex-wrap: nowrap;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e2e8f0;
 }
 
 .member-upload-trigger {
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 14px;
-  background: #eef2ff;
-  color: #4d52c5;
-  font-weight: 700;
-  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: #3182ce;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: background-color 160ms ease, transform 160ms ease;
 }
 
 .member-upload-trigger:hover {
-  background: #e5eaff;
+  background: #2b6cb0;
   transform: translateY(-1px);
 }
 
 .member-upload-meta {
-  display: inline-block;
-  max-width: 180px;
-  min-width: 0;
-  flex: 0 1 180px;
-  color: #7d8798;
-  font-size: 0.84rem;
-  line-height: 1.4;
+  flex: 1;
+  color: #718096;
+  font-size: 0.75rem;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -490,13 +574,12 @@ body.logout-dialog-open .logout-dialog {
 
 .member-upload-preview {
   position: relative;
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #dde3f2;
-  background: #f8faff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  border: 1px solid #e2e8f0;
+  background: #fff;
 }
 
 .member-upload-preview-image,
@@ -1273,6 +1356,132 @@ body.logout-dialog-open .logout-dialog {
 }
 
 .members-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.membership-plans-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.membership-plans-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.expiring-memberships-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.expiring-memberships-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.freeze-pause-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.freeze-pause-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.daily-checkin-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.daily-checkin-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.manual-entry-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.manual-entry-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.attendance-reports-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.attendance-reports-stage.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.payments-stage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(18px) scale(0.99);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  transition: opacity 240ms ease, transform 240ms ease;
+  background-color: #f8fafc;
+}
+
+.payments-stage.is-active {
   opacity: 1;
   transform: none;
   pointer-events: auto;
@@ -2062,8 +2271,8 @@ body.logout-dialog-open .logout-dialog {
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.24);
   color: #fff;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .coming-card span {
@@ -3836,7 +4045,7 @@ body.logout-dialog-open .logout-dialog {
     right: 0;
     bottom: 0;
     left: var(--sidebar-compact-width);
-    z-index: 3;
+    z-index: 900;
     background:
       linear-gradient(90deg, rgba(9, 12, 21, 0.34), rgba(9, 12, 21, 0.44));
     opacity: 0;
@@ -4776,9 +4985,11 @@ body.logout-dialog-open .logout-dialog {
   }
 
   .member-form-modal {
-    width: min(95vw, 760px);
-    padding: 22px 18px;
-    border-radius: 24px;
+    width: 100vw;
+    height: 94vh;
+    max-height: 94vh;
+    padding: 24px 20px;
+    border-radius: 28px 28px 0 0;
   }
 
   .logout-dialog-actions {

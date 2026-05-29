@@ -176,7 +176,6 @@ const navigateWithTransition = (destination, enterState, trigger) => {
 
   if (resolvedEnterState) {
     sessionStorage.setItem("gymdeck-enter", resolvedEnterState);
-    console.log("GymDeck: Set gymdeck-enter to:", resolvedEnterState);
   } else {
     sessionStorage.removeItem("gymdeck-enter");
   }
@@ -189,7 +188,6 @@ const navigateWithTransition = (destination, enterState, trigger) => {
     }
   }
 
-  console.log("GymDeck: Navigating to:", destination);
   document.body.classList.add("is-transitioning");
 
   window.setTimeout(() => {

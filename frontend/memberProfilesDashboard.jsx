@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import {
   AlertTriangle,
@@ -717,59 +717,7 @@ function BulkActionBar({
   );
 }
 
-function PriorityGroup({
-  config,
-  members: groupMembers,
-  selectedIds,
-  expandedId,
-  onToggleMember,
-  onExpand,
-  onInlineAction,
-  showDelete,
-  onDelete,
-}) {
-  const Icon = config.icon;
-  return (
-    <section className={cn("min-w-0 rounded-lg border p-3", config.lane)}>
-      <header className="mb-3 flex min-h-12 items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg", config.iconWrap)}>
-            <Icon className="h-4 w-4" aria-hidden="true" />
-          </span>
-          <div className="min-w-0">
-            <h2 className="m-0 text-sm font-black leading-tight text-slate-950">{config.title}</h2>
-            <p className="m-0 truncate text-[11px] font-bold text-slate-500">{config.subtitle}</p>
-          </div>
-        </div>
-        <strong className={cn("text-2xl font-black leading-none", config.count)}>{groupMembers.length}</strong>
-      </header>
-
-      <div className="grid items-start gap-3 lg:grid-cols-2 2xl:grid-cols-3">
-        {groupMembers.length ? (
-          groupMembers.map((member) => (
-            <MemberCard
-              key={member.id}
-              member={member}
-              selected={selectedIds.has(member.id)}
-              expanded={expandedId === member.id}
-              onToggleSelected={() => onToggleMember(member.id)}
-              onExpand={() => onExpand(expandedId === member.id ? "" : member.id)}
-              onInlineAction={onInlineAction}
-              onDelete={onDelete}
-              showDelete={showDelete}
-            />
-          ))
-        ) : (
-          <div className="rounded-lg border border-dashed border-slate-300 bg-white/60 p-4 text-center text-xs font-bold text-slate-500">
-            No profiles in this group
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function MemberCard({ member, selected, expanded, onToggleSelected, onExpand, onInlineAction, onDelete, showDelete }) {
+const MemberCard = React.memo(function MemberCard({ member, selected, expanded, onToggleSelected, onExpand, onInlineAction, onDelete, showDelete }) {
   const priority = getPriority(member);
   const expiryCopy = getExpiryCopy(member);
   const expiryDate = compactDateFormatter.format(new Date(`${member.expiryDate}T12:00:00+05:30`));
@@ -833,7 +781,59 @@ function MemberCard({ member, selected, expanded, onToggleSelected, onExpand, on
       {expanded ? <MemberDetails member={member} /> : null}
     </article>
   );
-}
+});
+
+const PriorityGroup = React.memo(function PriorityGroup({
+  config,
+  members: groupMembers,
+  selectedIds,
+  expandedId,
+  onToggleMember,
+  onExpand,
+  onInlineAction,
+  showDelete,
+  onDelete,
+}) {
+  const Icon = config.icon;
+  return (
+    <section className={cn("min-w-0 rounded-lg border p-3", config.lane)}>
+      <header className="mb-3 flex min-h-12 items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg", config.iconWrap)}>
+            <Icon className="h-4 w-4" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="m-0 text-sm font-black leading-tight text-slate-950">{config.title}</h2>
+            <p className="m-0 truncate text-[11px] font-bold text-slate-500">{config.subtitle}</p>
+          </div>
+        </div>
+        <strong className={cn("text-2xl font-black leading-none", config.count)}>{groupMembers.length}</strong>
+      </header>
+
+      <div className="grid items-start gap-3 lg:grid-cols-2 2xl:grid-cols-3">
+        {groupMembers.length ? (
+          groupMembers.map((member) => (
+            <MemberCard
+              key={member.id}
+              member={member}
+              selected={selectedIds.has(member.id)}
+              expanded={expandedId === member.id}
+              onToggleSelected={() => onToggleMember(member.id)}
+              onExpand={() => onExpand(expandedId === member.id ? "" : member.id)}
+              onInlineAction={onInlineAction}
+              onDelete={onDelete}
+              showDelete={showDelete}
+            />
+          ))
+        ) : (
+          <div className="rounded-lg border border-dashed border-slate-300 bg-white/60 p-4 text-center text-xs font-bold text-slate-500">
+            No profiles in this group
+          </div>
+        )}
+      </div>
+    </section>
+  );
+});
 
 function StatusBadge({ className, label }) {
   return (
@@ -924,8 +924,12 @@ function ActiveMembersDashboard() {
     }
   });
 
-  const activePredicate = filterOptions.find((f) => f.id === activeFilter)?.predicate || filterOptions[0].predicate;
-  const normalizedQuery = normalize(query);
+  const activePredicate = useMemo(() => 
+    filterOptions.find((f) => f.id === activeFilter)?.predicate || filterOptions[0].predicate,
+    [activeFilter]
+  );
+  
+  const normalizedQuery = useMemo(() => normalize(query), [query]);
 
   const activeMembers = useMemo(() => members.filter((m) => !deletedIds.has(m.id)), [deletedIds]);
 
@@ -936,7 +940,7 @@ function ActiveMembersDashboard() {
         return matchesQuery && activePredicate(m);
       })
       .sort((a, b) => sortMembers(a, b, sortBy));
-  }, [activeFilter, activePredicate, normalizedQuery, sortBy, activeMembers]);
+  }, [activePredicate, normalizedQuery, sortBy, activeMembers]);
 
   const groupedMembers = useMemo(() => {
     return filteredMembers.reduce(
@@ -957,41 +961,52 @@ function ActiveMembersDashboard() {
     return { dueTotal, expiringSoon, attention: activeMembers.filter((m) => getPriority(m) === "attention").length };
   }, [activeMembers]);
 
-  const visibleIds = filteredMembers.map((m) => m.id);
-  const selectedVisibleCount = visibleIds.filter((id) => selectedIds.has(id)).length;
-  const allVisibleSelected = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
-  const selectedMembers = activeMembers.filter((m) => selectedIds.has(m.id));
+  const visibleIds = useMemo(() => filteredMembers.map((m) => m.id), [filteredMembers]);
+  const selectedVisibleCount = useMemo(() => 
+    visibleIds.filter((id) => selectedIds.has(id)).length,
+    [visibleIds, selectedIds]
+  );
+  const allVisibleSelected = useMemo(() => 
+    visibleIds.length > 0 && selectedVisibleCount === visibleIds.length,
+    [visibleIds.length, selectedVisibleCount]
+  );
+  const selectedMembers = useMemo(() => 
+    activeMembers.filter((m) => selectedIds.has(m.id)),
+    [activeMembers, selectedIds]
+  );
 
-  const toggleMember = (memberId) => {
+  const toggleMember = useCallback((memberId) => {
     setSelectedIds((cur) => {
       const next = new Set(cur);
       next.has(memberId) ? next.delete(memberId) : next.add(memberId);
       return next;
     });
-  };
+  }, []);
 
-  const toggleVisibleSelection = () => {
+  const toggleVisibleSelection = useCallback(() => {
     setSelectedIds((cur) => {
       const next = new Set(cur);
       if (allVisibleSelected) visibleIds.forEach((id) => next.delete(id));
       else visibleIds.forEach((id) => next.add(id));
       return next;
     });
-  };
+  }, [allVisibleSelected, visibleIds]);
 
-  const clearSelection = () => {
+  const clearSelection = useCallback(() => {
     setSelectedIds(new Set());
     setNotice("");
-  };
+  }, []);
 
-  const handleBulkAction = (action) => {
+  const handleBulkAction = useCallback((action) => {
     if (!selectedMembers.length) return;
     setNotice(`${action} queued for ${selectedMembers.length} selected ${selectedMembers.length === 1 ? "member" : "members"}.`);
-  };
+  }, [selectedMembers.length]);
 
-  const handleInlineAction = (member, action) => setNotice(`${action} queued for ${member.name}.`);
+  const handleInlineAction = useCallback((member, action) => {
+    setNotice(`${action} queued for ${member.name}.`);
+  }, []);
 
-  const handleDeleteMember = (memberId) => {
+  const handleDeleteMember = useCallback((memberId) => {
     setDeletedIds((cur) => {
       if (cur.has(memberId)) return cur;
       const next = new Set(cur);
@@ -1001,7 +1016,12 @@ function ActiveMembersDashboard() {
       setNotice("Member archived and removed from active views.");
       return next;
     });
-  };
+  }, []);
+
+  const resetView = useCallback(() => {
+    setQuery("");
+    setActiveFilter("all");
+  }, []);
 
   return (
     <div className="min-h-full font-sans text-slate-950">
@@ -1292,7 +1312,7 @@ function ArchiveBulkBar({
   );
 }
 
-function ArchiveGroup({ config, members: groupMembers, selectedIds, expandedId, onToggleMember, onExpand, onCardAction }) {
+const ArchiveGroup = React.memo(function ArchiveGroup({ config, members: groupMembers, selectedIds, expandedId, onToggleMember, onExpand, onCardAction }) {
   const Icon = config.icon;
 
   return (
@@ -1326,7 +1346,7 @@ function ArchiveGroup({ config, members: groupMembers, selectedIds, expandedId, 
       </div>
     </section>
   );
-}
+});
 
 function ArchiveMetric({ label, value, detail, danger = false }) {
   return (
@@ -1344,7 +1364,7 @@ function ArchiveMetric({ label, value, detail, danger = false }) {
   );
 }
 
-function ArchiveMemberCard({ member, groupConfig, selected, expanded, onToggleSelected, onExpand, onCardAction }) {
+const ArchiveMemberCard = React.memo(function ArchiveMemberCard({ member, groupConfig, selected, expanded, onToggleSelected, onExpand, onCardAction }) {
   const daysInactive = getArchiveDaysInactive(member);
   const expiryDate = compactDateFormatter.format(new Date(`${member.expiryDate}T12:00:00+05:30`));
   const lastVisitDate = compactDateFormatter.format(new Date(member.lastVisitAt));
@@ -1487,7 +1507,7 @@ function ArchiveMemberCard({ member, groupConfig, selected, expanded, onToggleSe
       ) : null}
     </article>
   );
-}
+});
 
 function ArchiveEmptyState({ onReset }) {
   return (
@@ -1680,8 +1700,8 @@ function PastMembersDashboard() {
 // ─────────────────────────────────────────
 // ROOT — ROUTES BETWEEN VIEWS
 // ─────────────────────────────────────────
-function MemberProfilesDashboard() {
-  const [viewMode, setViewMode] = useState("member-profiles");
+function MemberProfilesDashboard({ initialScreen = "member-profiles" }) {
+  const [viewMode, setViewMode] = useState(initialScreen);
 
   useEffect(() => {
     const onRouteChange = (event) => {
@@ -1698,17 +1718,30 @@ function MemberProfilesDashboard() {
   return <ActiveMembersDashboard />;
 }
 
+import { ErrorBoundary } from "./ErrorHandlers.jsx";
+
 // ─────────────────────────────────────────
 // MOUNT
 // ─────────────────────────────────────────
-export function mountMemberProfilesDashboard() {
+export function mountMemberProfilesDashboard(initialScreen = "member-profiles") {
   const stage = document.querySelector('[data-stage="member-profile"]');
-  if (!stage) return;
+  if (!stage) return null;
 
   const rootElement = document.createElement("div");
   rootElement.dataset.memberProfilesReactRoot = "";
   rootElement.className = "min-h-full";
   stage.replaceChildren(rootElement);
 
-  createRoot(rootElement).render(<MemberProfilesDashboard />);
+  try {
+    const root = createRoot(rootElement);
+    root.render(
+      <ErrorBoundary>
+        <MemberProfilesDashboard initialScreen={initialScreen} />
+      </ErrorBoundary>
+    );
+    return root;
+  } catch (err) {
+    console.error("Failed to render Member Profiles UI:", err);
+    return null;
+  }
 }

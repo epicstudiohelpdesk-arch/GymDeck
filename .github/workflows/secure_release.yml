@@ -1,0 +1,84 @@
+name: Enterprise Secure Release Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags
+
+jobs:
+  security-audit:
+    name: Dependency & Cryptography Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        
+      - name: Install cargo-deny
+        run: cargo install cargo-deny
+        
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+        
+      - name: Run Cargo Deny (Licenses, Bans, Sources)
+        run: cargo deny check
+        working-directory: src-tauri
+        
+      - name: Run Cargo Audit (CVE Verification)
+        run: cargo audit
+        working-directory: src-tauri
+        
+  build-and-sign:
+    name: Build & Sign Native Binaries
+    needs: security-audit
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: aarch64-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+          
+      - name: Install Node.js & Dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      
+      # macOS Specific Hardening (Notarization)
+      - name: Build macOS (Notarized)
+        if: matrix.os == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: npm run tauri build -- --target ${{ matrix.target }}
+        
+      # Windows Specific Hardening (Authenticode)
+      - name: Build Windows (Authenticode Signed)
+        if: matrix.os == 'windows-latest'
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: npm run tauri build -- --target ${{ matrix.target }}
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gymdeck-installers-${{ matrix.os }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/

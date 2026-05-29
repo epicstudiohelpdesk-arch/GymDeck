@@ -126,18 +126,21 @@ const WelcomeOverlay = ({ name = "Admin", onComplete }) => {
             </motion.div>
           </div>
 
-          {/* Bottom Branding Mark */}
+          {/* Bottom Brand Mark */}
           <motion.div 
-            className="absolute bottom-12 flex items-center gap-2 opacity-20"
+            className="absolute bottom-12 flex items-center gap-2"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.2 }}
-            transition={{ delay: 1.5 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
           >
-             <svg className="w-4 h-4 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
-               <path d="M12 2.5c1.05 3.98 2.03 4.97 6 6-3.97 1.03-4.95 2.02-6 6-1.05-3.98-2.03-4.97-6-6 3.97-1.03 4.95-2.02 6-6Z" />
-             </svg>
-             <span className="text-[10px] font-black tracking-[0.3em] uppercase text-slate-900 font-ethnocentric">GymDeck</span>
+            <div className="w-5 h-5 text-slate-900">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.5c1.05 3.98 2.03 4.97 6 6-3.97 1.03-4.95 2.02-6 6-1.05-3.98-2.03-4.97-6-6 3.97-1.03-4.95-2.02 6-6Z" />
+              </svg>
+            </div>
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-900">GymDeck</span>
           </motion.div>
+
         </motion.div>
       )}
     </AnimatePresence>

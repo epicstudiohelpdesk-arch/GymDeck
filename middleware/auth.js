@@ -25,10 +25,3 @@ export const clearAuthData = (req) => {
     });
   }
 };
-
-// Optional: Create a middleware that allows optional authentication
-// (useful for pages that show different content for logged in/out users)
-export const optionalAuth = (req, res, next) => {
-  // Just continue - don't block, but user info might be in session
-  next();
-};

@@ -1,9 +1,27 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   root: '.',
+  resolve: {
+    alias: {
+      // Use lottie_light.js to remove eval() warnings and reduce bundle size by ~50%
+      'lottie-web': resolve(__dirname, 'node_modules/lottie-web/build/player/lottie_light.js'),
+    },
+  },
+  plugins: [
+    react(),
+    visualizer({
+      open: false,
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap', // sunburst, treemap, network
+    }),
+  ],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -12,11 +30,12 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        passes: 2,
-        pure_funcs: ['console.log', 'console.debug'],
+        passes: 3, 
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.trace'],
       },
       mangle: {
         safari10: true,
+        toplevel: true,
       },
       format: {
         comments: false,
@@ -24,6 +43,13 @@ export default defineConfig({
     },
     cssCodeSplit: true,
     rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress "use client" warnings from Framer Motion and other libraries
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message.includes('use client')) {
+          return;
+        }
+        warn(warning);
+      },
       input: {
         main: resolve(__dirname, 'index.html'),
         authLogin: resolve(__dirname, 'authentication/index.html'),
@@ -37,25 +63,47 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         manualChunks: (id) => {
-          // Vendor chunking for better caching
           if (id.includes('node_modules')) {
-            return 'vendor';
+            // Group framework core together to prevent circular dependencies
+            if (
+              id.includes('react') || 
+              id.includes('react-dom') || 
+              id.includes('scheduler') || 
+              id.includes('lottie')
+            ) {
+              return 'vendor-framework';
+            }
+            
+            // Separate heavy animation and icon libraries
+            if (id.includes('framer-motion')) return 'vendor-framer';
+            if (id.includes('lucide-react')) return 'vendor-lucide';
+            
+            // Other utilities
+            return 'vendor-utils';
+          }
+          
+          // Separate heavy dashboard modules
+          if (id.includes('frontend/')) {
+            if (id.includes('AttendanceReports')) return 'module-reports';
+            if (id.includes('MembershipPlans')) return 'module-membership';
+            if (id.includes('FreezePause')) return 'module-freeze';
+            if (id.includes('memberProfilesDashboard')) return 'module-profiles';
           }
         },
       },
     },
-    target: 'es2018',
-    cssMinify: true,
-    assetsInlineLimit: 0,
-    // Generate sourcemaps for production debugging (optional, comment out for production)
-    // sourcemap: false,
+    target: ['es2021', 'chrome97', 'safari13'], 
+    cssMinify: 'esbuild',
+    assetsInlineLimit: 4096, 
   },
   server: {
     port: 3000,
     open: '/',
+    strictPort: true,
   },
-  // Optimize dependencies
+  // Pre-bundle heavy dependencies for faster dev startup
   optimizeDeps: {
-    include: [],
+    include: ['react', 'react-dom', 'framer-motion', 'lucide-react'],
+    exclude: [],
   },
 });
