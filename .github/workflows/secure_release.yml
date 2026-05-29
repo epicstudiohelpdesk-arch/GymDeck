@@ -34,8 +34,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-latest
-            target: aarch64-apple-darwin
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             
@@ -54,26 +52,7 @@ jobs:
           node-version: 20
       - run: npm ci
       
-      # macOS Specific Hardening (Notarization)
-      - name: Build macOS (Notarized)
-        if: matrix.os == 'macos-latest'
-        env:
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-        run: npm run tauri build -- --target ${{ matrix.target }}
-        
-      # Windows Specific Hardening (Authenticode)
-      - name: Build Windows (Authenticode Signed)
-        if: matrix.os == 'windows-latest'
-        env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+      - name: Build
         run: npm run tauri build -- --target ${{ matrix.target }}
         
       - name: Upload Artifacts
