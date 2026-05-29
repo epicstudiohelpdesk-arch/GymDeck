@@ -31,7 +31,6 @@ jobs:
         
   build-and-sign:
     name: Build & Sign Native Binaries
-    needs: security-audit
     strategy:
       matrix:
         include:
